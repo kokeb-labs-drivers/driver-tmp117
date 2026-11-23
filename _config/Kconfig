@@ -1,0 +1,72 @@
+# Kconfig for the TMP117 driver. The root CMakeLists.txt registers it with ESP-IDF
+# (idf_component_register(... KCONFIG _config/Kconfig)), so `idf.py menuconfig` shows
+# "TMP117 temperature sensor". The values reach the code only through
+# inc/tmp117_kconfig.hpp; no public driver signature uses them.
+menuconfig TMP117
+    bool "TMP117 temperature sensor"
+    default y
+    help
+      Defaults for tmp117::KconfigDefaults(). The driver itself does not
+      need Kconfig; outside ESP-IDF the same defaults come from Config{}.
+
+if TMP117
+
+choice TMP117_AVERAGING
+    prompt "Conversions averaged per result"
+    default TMP117_AVERAGING_8
+    help
+      Configuration AVG. The reset value is 8. More averaging lowers noise and lengthens the
+      cycle (Table 7-7 of the datasheet).
+
+config TMP117_AVERAGING_1
+    bool "1 (no averaging)"
+config TMP117_AVERAGING_8
+    bool "8"
+config TMP117_AVERAGING_32
+    bool "32"
+config TMP117_AVERAGING_64
+    bool "64"
+
+endchoice
+
+choice TMP117_CYCLE
+    prompt "Conversion cycle time"
+    default TMP117_CYCLE_1S
+    help
+      Configuration CONV. The reset value is 1 s. With averaging the chip's cycle is the longer of
+      this time and the averaging time of Table 7-7, so a short cycle with heavy averaging runs slower.
+
+config TMP117_CYCLE_15P5MS
+    bool "15.5 ms"
+config TMP117_CYCLE_125MS
+    bool "125 ms"
+config TMP117_CYCLE_250MS
+    bool "250 ms"
+config TMP117_CYCLE_500MS
+    bool "500 ms"
+config TMP117_CYCLE_1S
+    bool "1 s"
+config TMP117_CYCLE_4S
+    bool "4 s"
+config TMP117_CYCLE_8S
+    bool "8 s"
+config TMP117_CYCLE_16S
+    bool "16 s"
+
+endchoice
+
+config TMP117_RESET_TIMEOUT_MS
+    int "Longest wait for the power-up load (ms)"
+    range 2 1000
+    default 10
+    help
+      The datasheet gives 1.5 ms typical and no maximum, so this is a driver choice.
+
+config TMP117_EEPROM_TIMEOUT_MS
+    int "Longest wait for one EEPROM word (ms)"
+    range 8 1000
+    default 50
+    help
+      The datasheet gives about 7 ms typical and no maximum, so this is a driver choice.
+
+endif

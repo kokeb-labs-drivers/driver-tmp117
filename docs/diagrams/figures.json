@@ -1,0 +1,186 @@
+{
+  "bus-frame": {
+    "title": "One register read on the I2C bus",
+    "alt": "Sequence of one I2C register read: the host sends START, the write address and the pointer 00h of Temp_Result, repeats START with the read address, the TMP117 returns two bytes and the host ends with NACK and STOP.",
+    "description": "Two participants, the host and the TMP117. The host sends START, address 0x48 with the write bit and the pointer byte 0x00, Temp_Result. It repeats START with address 0x48 and the read bit. The chip returns the high byte and the low byte of the register. The host answers the last byte with NACK and ends the transaction with STOP.",
+    "profile": "detail",
+    "width": 477,
+    "source": "docs/model/bus-frame.seq.yml",
+    "sources": [
+      "docs/model/bus-frame.seq.yml"
+    ],
+    "kind": "seq",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
+    "font": ""
+  },
+  "bus-timing": {
+    "title": "I2C timing of the address byte",
+    "alt": "I2C timing of the TMP117: the start condition, the 7-bit address and the write bit, each held while SCL is high, and the acknowledge, with the start, setup and hold times of the datasheet.",
+    "description": "The two lanes are SCL and SDA, left to right in time. SDA falls while SCL is high (the start), the address bits follow, each stable while SCL is high, then the TMP117 pulls SDA low for the acknowledge. The table under the lanes gives each interval with its datasheet value.",
+    "profile": "phone",
+    "width": 640,
+    "source": "docs/model/bus-timing.timing.yml",
+    "sources": [
+      "docs/model/bus-timing.timing.yml"
+    ],
+    "kind": "timing",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": true,
+    "font": ""
+  },
+  "bus-topology": {
+    "title": "Up to four TMP117 on one I2C bus",
+    "alt": "An I2C bus on which an MCU and up to four TMP117 devices share SDA and SCL, each at the address its ADD0 pin selects, with one pull-up resistor per line.",
+    "description": "The MCU on top and the TMP117 devices under it connect to the rails SDA and SCL on the right; the dashed card stands for the devices in between. One pull-up per line ties the bus to the supply.",
+    "profile": "phone",
+    "width": 640,
+    "source": "docs/model/bus-topology.topology.yml",
+    "sources": [
+      "docs/model/bus-topology.topology.yml"
+    ],
+    "kind": "topology",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
+    "font": ""
+  },
+  "chip-blocks": {
+    "title": "Inside the TMP117",
+    "alt": "Block diagram of the TMP117: its function blocks, how they connect and which package pins reach each block.",
+    "description": "The TMP117's function blocks inside its outline. Arrows between blocks carry signals or data in the direction they point (both ways where they have two heads). The package pins stand on the left and right edges with their numbers, each wired to the block it reaches.",
+    "profile": "detail",
+    "width": 1200,
+    "source": "docs/hardware.yml",
+    "sources": [
+      "docs/hardware.yml",
+      "inc/tmp117.hpp",
+      "inc/tmp117_i2c_interface.hpp"
+    ]
+  },
+  "chip-capabilities": {
+    "title": "What the TMP117 does",
+    "alt": "Capability map of the TMP117: Temperature (supported): A 16-bit result, 7.8125 m°C per count, never the 8000h value before a conversion; Averaging and cycle time (supported): 1, 8, 32 or 64 conversions per result and eight cycle times, checked against Table 7-7; Continuous, shutdown, one-shot (supported): Converts continuously, sleeps at 0.15 µA, or takes one result on request; Alert window and therm (supported): ALERT outside a window (alert mode) or above a limit with hysteresis (therm mode), flags latched; Offset trim (supported): The chip adds a signed offset to every result, up to ±256 °C in 7.8125 m°C steps; Power-on defaults (guarded): Stores the configuration, limits and offset so the chip starts alone; every step checked and relocked; Identity and traceability (supported): Checks Device_ID before anything else and reads the two NIST traceability words; Soft and general-call reset (guarded): Soft reset by default; the bus-wide general-call reset only when you opt in; SMBus alert response (not covered): The bus-wide alert address read; the driver returns Unsupported and says why.",
+    "description": "Each card is one function of the TMP117: an icon, its name and what it does for the application. The filled pill says how this driver covers it (legend below); the outlined pills are the chip registers behind it. The coverage table in the README gives the driver calls and the datasheet section of each card.",
+    "profile": "overview",
+    "width": 1200,
+    "source": "docs/hardware.yml",
+    "sources": [
+      "docs/hardware.yml",
+      "inc/tmp117.hpp",
+      "inc/tmp117_i2c_interface.hpp"
+    ]
+  },
+  "chip-circuit-typical": {
+    "title": "TMP117: Typical connections",
+    "alt": "Schematic of the TMP117 typical connections: the chip with U2 MCU, C1 capacitor 0.1 µF, R1 resistor 5 kΩ, R2 resistor 5 kΩ; the MCU wires carry the port hooks ReadAlertPin(bool&), Write() / WriteRead().",
+    "description": "A schematic. The MCU is on the left, each of its pins level with the chip pin it connects to; above each wire is the hook of the driver's port that drives or reads it. Supply pins point up to their supply and decoupling, ground pins down. Pins on the right carry the loads and the pins tied to a supply or ground; a cross marks a pin left open. A dot is a junction; wires that cross without a dot are not connected.",
+    "profile": "detail",
+    "width": 952,
+    "source": "docs/hardware.yml",
+    "sources": [
+      "docs/hardware.yml",
+      "inc/tmp117.hpp",
+      "inc/tmp117_i2c_interface.hpp"
+    ]
+  },
+  "chip-frame-i2c": {
+    "title": "TMP117: I2C register word",
+    "alt": "I2C register word of the TMP117, 24 bits, most significant bit first. Write: 0000 (bits 23 to 20), pointer (bits 19 to 16), data high (bits 15 to 8), data low (bits 7 to 0); Read: 0000 (bits 23 to 20), pointer (bits 19 to 16), reply high (bits 15 to 8), reply low (bits 7 to 0).",
+    "description": "One I2C register word of the TMP117, 24 bits in a row from the most significant (left, sent first) to the least significant (right). Each row is one kind of frame; each coloured box a field, with its first and last bit number under it.",
+    "profile": "overview",
+    "width": 1200,
+    "source": "docs/hardware.yml",
+    "sources": [
+      "docs/hardware.yml",
+      "inc/tmp117.hpp",
+      "inc/tmp117_i2c_interface.hpp"
+    ]
+  },
+  "chip-hero": {
+    "title": "TMP117",
+    "alt": "Overview of the TMP117, a digital temperature sensor with a 16-bit result in steps of 1/128 °C, accurate to 0.1 °C from -20 °C to 50 °C, a programmable alert window and a small EEPROM, read over I2C or SMBus. A MCU talks to it over I2C; it drives ALERT line; it reads back Die temperature. Headline figures: ±0.1 °C maximum error, -20 to 50 °C; 1/128 °C per count, 16-bit result; 1.8 to 5.5 V supply, 1.7 V up to 70 °C; 3.5 µA typical at one result per second; 400 kHz fastest SCL; 0.15 µA typical in shutdown.",
+    "description": "The TMP117 in the middle, drawn as its WSON-6 package. On the left the MCU that runs the driver, joined to it by I2C. To the right, what the chip drives, in the order the power flows. Below it, what the chip reads back. The tiles at the bottom are the headline numbers, each with the datasheet section and page it comes from.",
+    "profile": "overview",
+    "width": 1200,
+    "source": "docs/hardware.yml",
+    "sources": [
+      "docs/hardware.yml",
+      "inc/tmp117.hpp",
+      "inc/tmp117_i2c_interface.hpp"
+    ]
+  },
+  "chip-outline": {
+    "title": "TMP117 package, WSON-6",
+    "alt": "Outline of the TMP117 in WSON-6 drawn to scale from above: body 2.0 x 2.0 x 0.8 mm, pitch 0.65 mm, 6 pins and an exposed pad.",
+    "description": "The TMP117 package seen from the top and, when the height is known, from the side, drawn to scale: 2.0 x 2.0 x 0.8 mm. The arrows carry the datasheet's dimensions, the dot marks pin 1 and the pads are numbered counter-clockwise from it, coloured by the pin's electrical type (legend below). Pads sit centred on each side at the stated pitch; the datasheet's land pattern is the reference for a board.",
+    "profile": "detail",
+    "width": 913,
+    "source": "docs/hardware.yml",
+    "sources": [
+      "docs/hardware.yml",
+      "inc/tmp117.hpp",
+      "inc/tmp117_i2c_interface.hpp"
+    ]
+  },
+  "chip-pinout": {
+    "title": "TMP117 pinout, WSON-6",
+    "alt": "Pinout of the TMP117 in WSON-6, top view: 6 pins and an exposed pad, each with its name, its electrical type as a colour and the driver hook that uses it.",
+    "description": "The TMP117 seen from the top, in its WSON-6 package. Pin 1 is marked by the dot; the numbers run counter-clockwise from it. Each pad is coloured by the pin's electrical type (legend below). Next to it is the pin's name and, in mono, the hook of the driver's port that drives or reads it; a pin without a hook is not used by the driver. The dashed square is the exposed pad.",
+    "profile": "detail",
+    "width": 1051,
+    "source": "docs/hardware.yml",
+    "sources": [
+      "docs/hardware.yml",
+      "inc/tmp117.hpp",
+      "inc/tmp117_i2c_interface.hpp"
+    ]
+  },
+  "chip-wiring-typical": {
+    "title": "Wiring: Typical connections",
+    "alt": "Wiring of the TMP117 for the Typical connections: MCU I2C SCL to SCL (Write() / WriteRead()); MCU I2C SDA to SDA (Write() / WriteRead()); MCU GPIO (IRQ) to ALERT (ReadAlertPin(bool&)). Supplies, grounds and the support parts are listed under the drawing.",
+    "description": "The MCU on the left, the TMP117 in the middle. Each wire to the chip is coloured by the chip pin's electrical type and carries the net name and the chip pin number above it and, under it, the driver hooks that use it (and any part on the net). The boxes underneath list the supplies, the support parts and the pins this circuit leaves unconnected.",
+    "profile": "overview",
+    "width": 1200,
+    "source": "docs/hardware.yml",
+    "sources": [
+      "docs/hardware.yml",
+      "inc/tmp117.hpp",
+      "inc/tmp117_i2c_interface.hpp"
+    ]
+  },
+  "driver-layers": {
+    "title": "The layers, one of them yours",
+    "alt": "Layer diagram: your application calls the TMP117 core, which sends register reads and writes through the I2C port contract to the port class you write, which drives the chip; the core and the contract are the same on every MCU.",
+    "description": "Top to bottom, each arrow is a call. Your application calls one object, whose public calls are listed from the umbrella header in inc/. The core turns each call into register reads and writes and hands them to the port contract (the CRTP base in inc/*_interface.hpp), which forwards them, at compile time, to the hooks of the port class you write; your port moves the bytes on the bus. The notes on the right say which layers stay the same on every MCU and which one you write. A library without a port contract has only the first two layers.",
+    "profile": "overview",
+    "width": 1200,
+    "source": "docs/diagrams/figures/driver-layers.py",
+    "sources": [
+      "inc/tmp117.hpp:public calls",
+      "inc/tmp117_i2c_interface.hpp:I2cInterface"
+    ]
+  },
+  "read-call": {
+    "title": "One call through the layers",
+    "alt": "Sequence of one temperature read: your code calls the TMP117 core, which reads Temp_Result through your port, refuses the 8000h value, converts counts and returns a Result.",
+    "description": "Three participants: your code, the core class TMP117<Port> and your port. Your code calls ReadTemperatureMilliC. The core asks the port to write the pointer and read two bytes. A result of 8000h before any conversion ends the call with NoMeasurement, and after one it is evidence of a reset. Otherwise the core multiplies the counts by 7.8125 and returns a Result holding the value 23456 and the status Ok to your code.",
+    "profile": "detail",
+    "width": 625,
+    "source": "docs/model/read-call.seq.yml",
+    "sources": [
+      "docs/model/read-call.seq.yml"
+    ],
+    "kind": "seq",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
+    "font": ""
+  }
+}

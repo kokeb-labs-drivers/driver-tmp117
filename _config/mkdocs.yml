@@ -1,0 +1,39 @@
+# Documentation site on the shared MkDocs platform: theme, plugin and toolchain come from the
+# kokeb-mkdocs-theme package in kokeb-labs/ci-tools. This file lives in _config/ with the other
+# tool configuration; the pages are in ../docs. From the repository root:
+#
+#   pip install "git+https://github.com/kokeb-labs/ci-tools@v1\
+#   #subdirectory=packages/kokeb-mkdocs-theme"      (one line, without the backslash)
+#   mkdocs serve -f _config/mkdocs.yml               http://127.0.0.1:8000
+#   mkdocs build -f _config/mkdocs.yml --strict      what CI runs
+#   kokeb-docs figures && kokeb-docs gen         refresh figures and generated regions
+#   kokeb-docs check                               what CI checks before the build
+#
+# kokeb-docs finds this file on its own. Pages: docs/, order: docs/.nav.yml, rules:
+# docs/DOCS-STYLE-GUIDE.md in kokeb-labs/ci-tools.
+site_name: TMP117 Driver
+site_description: >-
+  C++20 driver for the Texas Instruments TMP117 high-accuracy I2C digital temperature sensor with alert output and on-chip EEPROM.
+repo_url: https://github.com/kokeb-labs-drivers/driver-tmp117
+copyright: Copyright (c) 2026 The driver-tmp117 authors
+docs_dir: ../docs
+# Repository knowledge pages, managed by the template: read in the repository, linked from the skills, not in the site.
+not_in_nav: |
+  /agent-context.md
+  /knowledge-index.md
+  /mechanization-policy.md
+  /recurring-defects.md
+site_dir: ../site
+
+theme:
+  name: kokeb
+
+plugins:
+  - kokeb
+  - search
+  - awesome-nav
+
+# The site has no Mermaid: every diagram is a committed light and dark SVG drawn by figkit from a model in docs/model.
+# `kokeb-docs check` fails on a mermaid fence or a .mmd file anywhere, README files included.
+extra:
+  no_mermaid: true

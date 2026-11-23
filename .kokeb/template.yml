@@ -1,0 +1,19 @@
+---
+# How this repository was made from kokeb-labs/driver-template. The template's drift check
+# (tools/scaffold.py --check-drift, CI: kokeb-labs/ci-tools ru-template-drift) scaffolds the template again
+# with these arguments and compares the files it manages. List a file under `local` only when it differs on
+# purpose, with the reason.
+template: 51ad731d6947e6bc15e1728a3b3b6cc650233614
+kind: "driver"
+name: "tmp117"
+bus: "i2c"
+namespace: "tmp117"
+description: "C++20 driver for the Texas Instruments TMP117 high-accuracy I2C digital temperature sensor with alert output and on-chip EEPROM."
+include_root: null
+org: "kokeb-labs-drivers"
+repo: "driver-tmp117"
+author: "The driver-tmp117 authors"
+license: "MIT"
+datasheet: "https://www.ti.com/lit/gpn/TMP117"
+platforms: [host, esp32]
+local: []

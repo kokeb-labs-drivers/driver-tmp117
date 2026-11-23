@@ -1,0 +1,266 @@
+# Testing and CI
+
+How the driver is checked: host tests against a model of the chip, a fuzzer that corrupts what the chip sends
+back, compiled documentation, an install test, ESP32 and Cortex-M builds, static analysis and measured quality
+gates, on every pull request.
+
+## Host tests
+
+The tests build the real driver against a register model of the TMP117 written from the datasheet alone: the
+register map and reset values, the power-up load and EEPROM programming with a virtual clock, the clear-on-read flags,
+Table 7-7, the one-shot return to shutdown, the 8000h value, and the unlock and relock of the EEPROM. They also inject
+faults: bus errors, a wrong Device_ID, a reset at any transfer, a stuck conversion, a stuck EEPROM, lines stuck at
+zeros, ones or the last word, one flipped reply at call k, and a write that was applied but reported as failed. They
+build with the firmware's flags, `-fno-exceptions -fno-rtti`, and warnings as errors, on GCC and Clang.
+
+```bash
+cmake -S . -B build -DTMP117_BUILD_TESTS=ON
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+| File | Covers |
+| --- | --- |
+| [`tests/test_tmp117.cpp`](../tests/test_tmp117.cpp) | Lifecycle, identity, power-up, golden frames, measurement, one-shot, flag latch, ALERT pin, setters, doubt and settle, reset evidence, resets, optional hooks |
+| [`tests/test_eeprom.cpp`](../tests/test_eeprom.cpp) | The programming sequence, the relock on every failure path (a NACK at each write), timeouts, the traceability words, the readings of ambiguities A2, A5 and A6 |
+| [`tests/test_faults.cpp`](../tests/test_faults.cpp) | Stuck lines, a flipped reply, a reset injected at every transfer of a script, no write after reset evidence, every ambiguity reading through a whole session |
+| [`tests/test_safety_regressions.cpp`](../tests/test_safety_regressions.cpp) | Switch-off after a failed settle, start-up on an unlocked EEPROM, a one-shot under both readings of A19, a raw read during a one-shot, a line stuck at 0 on the status and identity reads, switch-off of an uninitialised driver whose reads fail, the switch-off force flag, a reserved EEPROM_UL bit, the one-shot doubt cleared by a write |
+| [`tests/test_switch_off.cpp`](../tests/test_switch_off.cpp) | One test per row of the [switch-off decision table](contract.md#switch-off-decision-table), a sweep over every pattern of failed transfers of the call, and the third review round's probes (`regress-r3-*`) |
+| [`tests/test_bus_faults.cpp`](../tests/test_bus_faults.cpp) | Every transfer of every operation failing in turn is reported as `Bus` |
+| [`tests/fuzz/`](../tests/fuzz/fuzz_tmp117.cpp) | The fuzz target; CTest replays its corpus (`tmp117_fuzz_tmp117_corpus`), see below |
+| [`tests/test_errors.cpp`](../tests/test_errors.cpp) | The base `Error` values are 0 to 9; every chip-specific value (16 and up) is returned by some call |
+| [`tests/test_version.cpp`](../tests/test_version.cpp) | The version getters follow the generated header (also against a 9.8.7 probe) |
+| [`tests/test_kconfig.cpp`](../tests/test_kconfig.cpp) | `KconfigDefaults()` with and without `CONFIG_` values |
+| [`tests/compile_fail/`](../tests/compile_fail/port_without_delay.cpp) | Code that must not compile, each for its `EXPECT:` diagnostic: a port without `DelayUs()`, a `void ReadAlertPin()`, a `DelayUs(uint16_t)`, a hook with a narrowed parameter or without `noexcept`, an invalid `CheckedConfig`, a class that is not a port |
+| [`tests/mock_tmp117.hpp`](../tests/mock_tmp117.hpp) | The register model, with its own register map; the bus framing is in `mock_tmp117_bus.hpp` |
+| [`tests/test_model.cpp`](../tests/test_model.cpp) | The model's register map, reset values, Table 7-7 and Table 7-1 against the driver's, with `static_assert`; the model's own behaviour |
+| [`tests/test_support.hpp`](../tests/test_support.hpp) | A driver on a mock port (`Rig`) and the helpers the tests share |
+| [`tests/check_version_copy.cmake`](../tests/check_version_copy.cmake) | `_config/Doxyfile` carries the CMake version |
+| [`examples/host/`](../examples/host/README.md) | The host example, built with the test flags and run (`tmp117_host_example`) |
+| [`tests/check_install.cmake`](../tests/check_install.cmake) | Installs into a scratch prefix and builds [`tests/install_consumer/`](../tests/install_consumer/CMakeLists.txt) with `find_package(tmp117)` |
+| [`tests/check_doxygen.cmake`](../tests/check_doxygen.cmake) | Doxygen with `_config/Doxyfile` and warnings as errors, when `doxygen` is installed |
+
+### The model stands alone
+
+[`tests/mock_tmp117.hpp`](../tests/mock_tmp117.hpp) is written from the datasheet, not from the driver: it does not
+include `tmp117_registers.hpp` or `tmp117_types.hpp`. Its register map, field masks, reset values, cycle-time table
+and timing are its own (namespace `tmp117_test::chip`, each with the datasheet section), so a wrong constant in the
+driver cannot hide behind the same wrong constant in the model (handbook KB-TST-030).
+[`tests/test_model.cpp`](../tests/test_model.cpp) compares the two at compile time:
+
+```cpp
+--8<-- "tests/test_model.cpp:cross-check"
+```
+
+When the build stops on one of these, one of the two maps is wrong: check it against the section the model names,
+and fix that one. A new register goes into both, with its check. Every behaviour found on hardware becomes a fault
+mode of the model and a test that fails on the code before the fix; a chip with timing gets a virtual clock in the
+model (here `Elapse()`, driven by the mock port's `DelayUs()`).
+
+## Fuzz tests
+
+Everything the driver reads comes from the chip over the bus, so the data read is what a noisy cable, a wrong part
+or a broken chip controls. [`tests/fuzz/fuzz_tmp117.cpp`](../tests/fuzz/fuzz_tmp117.cpp) lets libFuzzer choose a
+configuration, then up to 64 driver calls, and on every bus transfer what the bus does: pass it to the model, fail
+it, flip bits of the data read or replace it, lose an acknowledged write, or store a write and lose its
+acknowledge.
+Between calls it can change the chip: a wrong Device_ID, a power cycle the driver was not told about, a stuck
+conversion or EEPROM, any temperature. After every call it checks the driver's promises and aborts, naming the line,
+when one breaks:
+
+- a failed call returns an `Error` the enum defines and `T{}`; a temperature is inside the range of the 16-bit
+  result;
+- before `EnsureInitialized()` has reached the chip no call makes a transfer (`Deinitialize()` returns `Ok`, row N1),
+  afterwards, once the driver is uninitialised, only `Deinitialize()` and `SetMode(Mode::Shutdown)` do, and
+  `InvalidArgument` means nothing was sent;
+- `UnexpectedReset` leaves the driver uninitialised;
+- the driver never writes Temp_Result, Device_ID, EEPROM1, EEPROM3 or a pointer outside the map, and never sends the
+  general-call reset without the opt-in;
+- `SetMode(Shutdown)` on an initialised driver always puts a Configuration write with MOD 01 on the bus, whatever the
+  settle reads returned, unless it was refused for an unlocked EEPROM or another device (N2), or the settle found
+  reset evidence (I3: the next rule applies);
+- `SetMode(Shutdown)` and `Deinitialize()` of a driver that lost track of the chip put that write on the bus unless
+  the EEPROM_UL reply the driver received after its last lock write was clean with EUN = 1 (row U4 of the
+  [decision table](contract.md#switch-off-decision-table)), the read before the first lock write and that write
+  both failed (U2), the EEPROM stayed busy (U6, `Timeout`) or another device answered (N2). There is no exclusion for
+  failed, garbled or altered reads; a U4 refusal with no altered reply in the call also needs the chip model's true
+  EUN to be 1, and an N2 refusal a model Device_ID that is not 117h;
+- in a switch-off call no write follows an EEPROM_UL reply received clean with EEPROM_Busy set (rows W1, W2, U6);
+- the effect, not the frame: a switch-off that returns `Ok` leaves the chip model in shutdown, except in the
+  [residual risks](contract.md#residual-risks): a write of the call lost or NACKed, a reply altered in the call, an
+  initialised switch-off (no read first) whose write the chip ignored, and row U5 (no clean read-back of the last
+  lock write);
+- while no read reply was altered, no EEPROM word is programmed outside `ProgramPowerOnDefaults()` and
+  `ProgramUserWord()`, except by a switch-off whose last lock write was not read back clean (U5, the residual risk of
+  A21);
+- every log line is a non-empty plain-text message.
+
+When the model becomes your chip's, keep the target and turn its checks into your chip's promises: every value range
+the datasheet defines, and every state the driver must never reach.
+
+```bash
+# libFuzzer needs Clang (on macOS, Homebrew's LLVM)
+cmake -S . -B build-fuzz -DCMAKE_CXX_COMPILER=clang++ -DTMP117_BUILD_TESTS=ON -DTMP117_BUILD_FUZZERS=ON
+cmake --build build-fuzz --target fuzz_tmp117
+./build-fuzz/tests/fuzz/fuzz_tmp117 -max_total_time=120 tests/fuzz/corpus/fuzz_tmp117
+```
+
+The same file also builds without libFuzzer as `fuzz_replay_fuzz_tmp117`, and CTest replays every input in
+[`tests/fuzz/corpus/fuzz_tmp117/`](../tests/fuzz/corpus/fuzz_tmp117) on GCC and Clang
+(`tmp117_fuzz_tmp117_corpus`): the seeds (`seed-*`, `start-*`), and every input that ever broke a promise
+(`regress-*`, fourteen today), so a fixed bug stays fixed.
+CI fuzzes for 120 s on every pull request, from the seeds plus a corpus it keeps between runs
+(job `Host quality / fuzz`).
+
+## Quality gates
+
+The `Host quality` job measures the library code, `inc/` and `src/` only (tests and examples are left out), and
+fails when a value is over the limits of this repository's assurance level, `high` (set in
+[`.kokeb/handbook.yml`](../.kokeb/handbook.yml), defined by the handbook's ADR-0020):
+
+| Gate | Tool and how it is measured | Limit at `high` |
+| --- | --- | --- |
+| Complexity | lizard 1.24.1, modified cyclomatic complexity (`-m`: a `switch` counts once) per function | CCN at most 15 |
+| Function length | lizard, lines of code per function | at most 60 |
+| Parameters | lizard, per function | at most 6 |
+| Line coverage | GCC 14 `--coverage -O0`, every CTest, gcovr 8.7 `--merge-lines` (a template's lines count once across its instances), `--exclude-unreachable-branches --exclude-throw-branches` | at least 85 % |
+| Branch coverage | same run | at least 75 % |
+| MC/DC | GCC `-fcondition-coverage`, same run | measured, not gated at `high` (100 % at `safety`) |
+| Sanitizers | Clang, `-fsanitize=address,undefined -fno-sanitize-recover=all`, every CTest | no report |
+| Fuzzing | libFuzzer with ASan and UBSan, 120 s per target | no broken promise |
+
+The reports are in the run's `host-quality-reports` artifact and its step summary. To run the gates locally:
+
+```bash
+# Coverage (GCC 14 or later), then the complexity limits
+cmake -S . -B build-cov -DCMAKE_CXX_COMPILER=g++-14 -DTMP117_BUILD_TESTS=ON \
+  -DCMAKE_CXX_FLAGS="--coverage -O0 -fcondition-coverage"
+cmake --build build-cov && ctest --test-dir build-cov
+gcovr --root . --filter inc/ --filter src/ --merge-lines --exclude-unreachable-branches --txt build-cov
+lizard -m -C 15 -L 60 -a 6 inc src
+
+# Sanitizers (Clang)
+cmake -S . -B build-san -DCMAKE_CXX_COMPILER=clang++ -DTMP117_BUILD_TESTS=ON \
+  -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-sanitize-recover=all -O1 -g"
+cmake --build build-san && ctest --test-dir build-san --output-on-failure
+```
+
+The fuzz gate runs locally as shown in [Fuzz tests](#fuzz-tests).
+
+clang-tidy 20 ([`_config/.clang-tidy`](../_config/.clang-tidy): bugprone, CERT, clang-analyzer,
+cppcoreguidelines, modernize, performance, portability and readability, each disabled check with its reason) and
+cppcheck (strict) run in the `C++ lint` and `Repository checks` jobs and fail on any finding.
+
+The `MISRA` job ([`ci-misra.yml`](../.github/workflows/ci-misra.yml)) runs the shared `ru-misra` workflow of
+ci-tools at level `high`: it traces a host build and the Cortex-M build (`tmp117_optimised_build`) of every
+translation unit, checks them against MISRA C++:2023 and the handbook's C++20 profile (the CodeQL coding-standards
+and profile packs, plus the validated clang-tidy and cppcheck checks), and reports each finding against the
+handbook's compliance matrix and deviation records. A finding is fixed in the code; a deliberate exception names
+its deviation on the line before it (`// codeql::misra_deviation_next_line(MD-CPP-009)` above the `.ipp` include
+of `inc/tmp117.hpp`). Until the repository is public the job runs with `open_source_prerelease: true`, the
+declaration that the code is released under the licence in `LICENSE` and is to be published.
+
+### The MISRA scan, rehearsed locally
+
+The scan runs only in CI, and a first push has paid for the same few findings again and again. `tools/misra_lint.py`
+(standard-library Python, no build) catches those classes before the push; `tools/preflight.sh` runs it as the
+`misra-lint` step, which cannot be skipped, and its `--selftest` as `misra-lint-selftest`. It reads the C++ files
+(`*.hpp`, `*.cpp`, `*.ipp`) of `inc/`, `src/`, `tests/` and `examples/` and prints `file:line Rule N.N.N message`:
+
+| Rule | Reported | Severity |
+| --- | --- | --- |
+| 9.4.1 | an `if ... else if` chain that does not end in a plain `else` (at the last `else if`) | error |
+| 7.0.3 | arithmetic, comparison or conversion on a `char`: `c - '0'`, `c >= '0'`, `token[0] == '-'`, `static_cast<char>(byte)` | error |
+| 0.1.2 | a call statement that drops the result of a function the tree declares with a class return type | error (scalar result: warning) |
+| 13.3.3 | a function whose declaration and definition use different parameter names | error |
+| KB-CPP-012 | an include in `inc/` or `src/` outside the driver's library subset | error |
+| 8.0.1 | an operand of a logical and / or that is a comparison or bitwise expression and is not parenthesised | warning |
+
+**Severity.** An error fails the preflight; a warning is printed and counted in the summary line
+(`misra_lint: N file(s), E error(s), W warning(s)`) and does not. A finding is an error only when its rule is one the
+CI scan blocks on and it is in `inc/` or `src/`; every finding in `tests/` or `examples/` is a warning, as are 8.0.1
+everywhere and `--void-casts` (`(void)expr;`, which the scan accepts). `--strict` turns every warning into an error,
+for a reviewer who wants the whole list. This split is derived from CI evidence, not from the rule text: the scan
+reported 7.0.3, 9.4.1, 0.1.2 and 13.3.3 as `failure` and 8.0.1 as `warning`, only `failure` annotations fail the job,
+all findings listed were in `inc/` and `src/`, and drivers whose CI is green still carry `else if` chains in `tests/`.
+Revisit it if CodeQL is ever seen blocking on a finding in `tests/` or `examples/`, or on 8.0.1: move that rule or
+folder into the error set (`TRACED` and the severities in `tools/misra_lint.py`).
+
+The check is a token scan without types: it reports what it can decide and stays silent otherwise, so a clean run
+does not replace the scan, but an error is an error. Fix the code: compare characters through a table or
+`std::array<char, 1>` equality, convert a byte with `static_cast<char>`, end the chain in `else`, give the
+declaration and the definition the same parameter names, use the returned value or discard it with
+`static_cast<void>`. A deliberate exception carries the deviation the scan reads
+(`// codeql::misra_deviation_next_line(MD-CPP-...)` on the line before) or `// misra-lint: ignore 8.0.1` on the
+line. `--strict-precedence` (`a < b + 1`) reports more 8.0.1.
+
+### Evaluation order in checks, rehearsed locally
+
+The arguments of a call are evaluated in an unspecified order. GCC on x86-64 reads them right to left; Clang and GCC
+on aarch64 read them left to right, so a call such as `Check(d.Write(v), was_up, sent())` reads `sent()` before the
+write on the x86-64 CI runner only: a "nothing was sent" promise passes vacuously, and a positive one aborts on a
+correct driver. No local rehearsal on Apple silicon or in the aarch64 container sees it. Compute the result first
+(`const auto r = d.Write(v); Check(r, was_up, sent());`), or pass the probe and read it inside the helper after the
+call. `tools/eval_order_check.py` (standard-library Python, run as `python3 -I`) reports a call whose arguments hold a
+driver operation (`d.Op(...)`) and, in another argument, a read of a probe (`sent()`, `Transfers()`, `pending()`,
+`++`), or whose arguments read the fuzzer's input twice (`in.Byte()`, `FuzzConfig(in)`: the same corpus file then
+decodes into different calls per compiler). `tools/preflight.sh` runs it over `tests/` and `examples/` as the
+`eval-order` step (its `--selftest` as `eval-order-selftest`); neither can be skipped. It prints
+`file:line: error eval-order: <call>` and exits 1 on a finding; `// eval-order: ignore` on the line of the call is
+the deliberate exception. It is a token scan without types: it reports what it can decide, and a clean run does not
+replace review. Where a fuzz target has a positive check on a counter, keep a one-edit mutant of the counter that
+must abort the corpus replay (see `tests/fuzz/CMakeLists.txt` of a driver that has one), so the check cannot become
+vacuous unseen.
+
+The include subset is read from `handbook_check.py` of a ci-tools checkout (`CI_TOOLS_DIR`, default `../ci-tools`),
+so the two never differ; without the checkout the built-in list of ADR-0017 applies. The preflight also runs that
+`handbook_check.py` itself (the `handbook-check` step; skipped, with the reason named, only when the checkout or
+PyYAML is missing), lints `tests/install_consumer/main.cpp` with clang-tidy like every other C++ file (it is built
+by its own CMake project, so it is not in the host build's compilation database), and checks the first-push gitlink:
+after `git add -A`, `examples/esp32/scripts` must be a gitlink (mode 160000).
+
+## Documentation snippets
+
+Every C++ block on this site is included from [`tests/docs/`](../tests/docs/my_port.hpp), which the host build
+compiles (target `tmp117_doc_snippets`) with the driver instantiated over the documented port. A change to
+the API that breaks a page breaks the build first. The README's example is a generated copy of the same file;
+`kokeb-docs check` fails when it drifts.
+
+## CI workflows
+
+Everything runs from [`ci.yml`](../.github/workflows/ci.yml), which calls one workflow file per check and ends in
+the `CI gate` job, the single required check (`CI gate / gate`).
+
+| Job | What it checks |
+| --- | --- |
+| Host tests | GCC, then Clang (one job), build and run every test above, then build and run `examples/host` on its own |
+| Host quality | The gates above: complexity, coverage, sanitizers, fuzzing |
+| Cross-compile | `arm-none-eabi-g++` for Cortex-M0+, M4F and M7F with the strict flags, warnings as errors (nothing linked) |
+| C++ lint | clang-format and clang-tidy over the sources |
+| MISRA | MISRA C++:2023 and the C++20 profile on traced host and Cortex-M builds, at level `high` (see [Quality gates](#quality-gates)) |
+| Docs | Strict site build (`_config/mkdocs.yml`), figure and generated-region drift, Doxygen (`_config/Doxyfile`), offline link check, Lighthouse |
+| Repository checks | One job: DCO on pull requests, the org standard, Markdown and YAML lint, the [Kokeb Labs handbook](https://github.com/kokeb-labs/handbook) rules for `.kokeb/handbook.yml` (by rule ID), template drift (warns only) and cppcheck over the driver sources; a second job runs the handbook's source checks (include guards, bus requirements, raw access) |
+| CI gate | Passes only if every job above passed: the one required check |
+
+The **ESP32 examples** job builds every app in `examples/esp32/app_config.yml`, for each listed ESP-IDF version and
+build type, with the repository root as the driver's component, and lints the example sources. The gate needs it
+too.
+
+The workflows call the shared, versioned workflows of
+[kokeb-labs/ci-tools](https://github.com/kokeb-labs/ci-tools) at `@v1`.
+
+## On hardware
+
+The tests prove the driver against a model of the chip written from the datasheet; a bench proves the model. The
+driver states how far it has been checked as a level, in `driver.yml` (`hardware.level`) and as the README badge:
+
+| Level | Means |
+| --- | --- |
+| H0 | Host model only: never run on a chip. Releases say **not hardware-verified** |
+| H1 | A defined bench rig ran the example; the rig document and the logs are kept |
+| H2 | A hardware engineer reviewed the rig and the steps and signed off |
+
+An MCU example ([Examples](examples.md)) is the bench test: it logs the temperature twice a second. Warm the chip
+and watch the value rise. Record the rig and the result in the pull request's bench-status section; the
+`hardware-validation` skill says what evidence each level needs and how to write the rig document.
+`tools/check_hardware.py` keeps the level, the badge and the evidence in step.

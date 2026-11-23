@@ -1,0 +1,43 @@
+{
+  "name": "tmp117",
+  "cls": "TMP117",
+  "calls": [
+    "EnsureInitialized",
+    "Deinitialize",
+    "SoftReset",
+    "GeneralCallReset",
+    "SmbusAlertResponse",
+    "Configure",
+    "SetMode",
+    "SetAveraging",
+    "SetCycleTime",
+    "SetAlertFunction",
+    "SetAlertPolarity",
+    "SetAlertSource",
+    "SetLimits",
+    "SetOffsetMilliC",
+    "ReadTemperatureRaw",
+    "ReadTemperatureMilliC",
+    "StartOneShot",
+    "ReadOneShotMilliC",
+    "WaitDataReady",
+    "ReadStatus",
+    "ReadAlertPin",
+    "ProgramPowerOnDefaults",
+    "ProgramUserWord",
+    "ReadUniqueId",
+    "CheckHealth",
+    "ReadRegister"
+  ],
+  "sources": [
+    "inc/tmp117.hpp:public calls",
+    "inc/tmp117_i2c_interface.hpp:I2cInterface"
+  ],
+  "bus": "I2C",
+  "base": "I2cInterface",
+  "hooks": [
+    "EnsureInitialized",
+    "Write",
+    "WriteRead"
+  ]
+}
