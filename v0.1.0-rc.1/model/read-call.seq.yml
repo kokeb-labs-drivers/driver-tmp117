@@ -1,0 +1,27 @@
+---
+# Model of the figure 'read-call'. Edit this file; `kokeb-docs figures` draws it. Never edit the SVGs.
+kind: seq
+id: read-call
+title: One call through the layers
+alt: >-
+  Sequence of one temperature read: your code calls the TMP117 core, which reads Temp_Result through your port,
+  refuses the 8000h value, converts counts and returns a Result.
+reads: >-
+  Three participants: your code, the core class TMP117<Port> and your port. Your code calls ReadTemperatureMilliC.
+  The core asks the port to write the pointer and read two bytes. A result of 8000h before any conversion ends the
+  call with NoMeasurement, and after one it is evidence of a reset. Otherwise the core multiplies the counts by
+  7.8125 and returns a Result holding the value 23456 and the status Ok to your code.
+print: landscape
+sources:
+  - docs/model/read-call.seq.yml
+participants:
+  - {id: app, label: Your code, tone: magenta}
+  - {id: core, label: "TMP117<Port>", tone: green}
+  - {id: port, label: Your port, tone: teal}
+steps:
+  - {from: app, to: core, label: ReadTemperatureMilliC()}
+  - {from: core, to: port, label: "WriteRead(0x48, 00h, 2 bytes)"}
+  - {from: port, to: core, label: "true, high and low byte", return: true}
+  - {note: "8000h? NoMeasurement or UnexpectedReset", over: [core, port]}
+  - {note: "counts x 7.8125 mC", over: [core, port]}
+  - {from: core, to: app, label: "Result<int32_t>{23456, Ok}", return: true}

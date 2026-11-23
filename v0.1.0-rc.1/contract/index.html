@@ -1,0 +1,1772 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="C++20 driver for the Texas Instruments TMP117 high-accuracy I2C digital temperature sensor with alert output and on-chip EEPROM.">
+      
+      
+      
+        <link rel="canonical" href="https://kokeb-labs-drivers.github.io/driver-tmp117/latest/contract/">
+      
+      
+        <link rel="prev" href="../architecture/">
+      
+      
+        <link rel="next" href="../ambiguities/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/kokeb/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Contract - TMP117 Driver</title>
+      
+    
+    
+  
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+  
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.5%207.75A.75.75%200%200%201%207.25%207h1a.75.75%200%200%201%20.75.75v2.75h.25a.75.75%200%200%201%200%201.5h-2a.75.75%200%200%201%200-1.5h.25v-2h-.25a.75.75%200%200%201-.75-.75M8%206a1%201%200%201%201%200-2%201%201%200%200%201%200%202%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%201.5c-2.363%200-4%201.69-4%203.75%200%20.984.424%201.625.984%202.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621%201.49a.75.75%200%200%201-1.484.211c-.04-.282-.163-.547-.37-.847a9%209%200%200%200-.542-.68q-.126-.149-.268-.32C3.201%207.75%202.5%206.766%202.5%205.25%202.5%202.31%204.863%200%208%200s5.5%202.31%205.5%205.25c0%201.516-.701%202.5-1.328%203.259q-.142.172-.268.319c-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751%200%200%201-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848q.113-.133.213-.253c.561-.679.985-1.32.985-2.304%200-2.06-1.637-3.75-4-3.75M5.75%2012h4.5a.75.75%200%200%201%200%201.5h-4.5a.75.75%200%200%201%200-1.5M6%2015.25a.75.75%200%200%201%20.75-.75h2.5a.75.75%200%200%201%200%201.5h-2.5a.75.75%200%200%201-.75-.75%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M6.457%201.047c.659-1.234%202.427-1.234%203.086%200l6.082%2011.378A1.75%201.75%200%200%201%2014.082%2015H1.918a1.75%201.75%200%200%201-1.543-2.575Zm1.763.707a.25.25%200%200%200-.44%200L1.698%2013.132a.25.25%200%200%200%20.22.368h12.164a.25.25%200%200%200%20.22-.368Zm.53%203.996v2.5a.75.75%200%200%201-1.5%200v-2.5a.75.75%200%200%201%201.5%200M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M9.504.43a1.516%201.516%200%200%201%202.437%201.713L10.415%205.5h2.123c1.57%200%202.346%201.909%201.22%203.004l-7.34%207.142a1.25%201.25%200%200%201-.871.354h-.302a1.25%201.25%200%200%201-1.157-1.723L5.633%2010.5H3.462c-1.57%200-2.346-1.909-1.22-3.004zm1.047%201.074L3.286%208.571A.25.25%200%200%200%203.462%209H6.75a.75.75%200%200%201%20.694%201.034l-1.713%204.188%206.982-6.793A.25.25%200%200%200%2012.538%207H9.25a.75.75%200%200%201-.683-1.06l2.008-4.418.003-.006-.004-.009-.006-.006-.008-.001q-.005%200-.009.004%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5%205.782V2.5h-.25a.75.75%200%200%201%200-1.5h6.5a.75.75%200%200%201%200%201.5H11v3.282l3.666%205.76C15.619%2013.04%2014.543%2015%2012.767%2015H3.233c-1.776%200-2.852-1.96-1.899-3.458Zm-2.4%206.565a.75.75%200%200%200%20.633%201.153h9.534a.75.75%200%200%200%20.633-1.153L12.225%2010.5h-8.45ZM9.5%202.5h-3V6c0%20.143-.04.283-.117.403L4.73%209h6.54L9.617%206.403A.75.75%200%200%201%209.5%206Z%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1.75%202.5h10.5a.75.75%200%200%201%200%201.5H1.75a.75.75%200%200%201%200-1.5m4%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5m0%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5M2.5%207.75v6a.75.75%200%200%201-1.5%200v-6a.75.75%200%200%201%201.5%200%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+  <link rel="stylesheet" href="../assets/kokeb/kokeb.css">
+
+    
+      
+    
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="../assets/kokeb/fonts.css">
+  <noscript><link rel="stylesheet" href="../assets/kokeb/fonts.css"></noscript>
+
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+  
+  <meta name="theme-color" content="#0e1726" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1b2140" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kokeb Labs">
+  <meta property="og:title" content="Contract - TMP117 Driver">
+  <meta property="og:description" content="C++20 driver for the Texas Instruments TMP117 high-accuracy I2C digital temperature sensor with alert output and on-chip EEPROM.">
+  <meta property="og:url" content="https://kokeb-labs-drivers.github.io/driver-tmp117/latest/contract/">
+  <meta name="twitter:card" content="summary">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#contract" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You are reading the documentation of an older version.
+  <a href="https://kokeb-labs-drivers.github.io/driver-tmp117/"><strong>Go to the latest version.</strong></a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TMP117 Driver" class="md-header__button md-logo" aria-label="TMP117 Driver" data-md-component="logo">
+      
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false" class="kb-mark">
+    <g transform="translate(1.28 1.28) scale(0.12000)"><path d="M232,66 Q265.29,246.71 446,280 Q265.29,313.29 232,494 Q198.71,313.29 18,280 Q198.71,246.71 232,66 Z" fill="#F4B942"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#0E1726" stroke="#0E1726" stroke-width="24" stroke-linejoin="round"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#D9773B"/></g>
+  </svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          
+          <a class="kb-org" href="https://kokeb-labs.github.io/" title="All Kokeb Labs documentation">Kokeb Labs</a>
+          <span class="kb-org__sep" aria-hidden="true">/</span>
+          <span class="md-ellipsis">
+            TMP117 Driver
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Contract
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Follow the system theme"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Follow the system theme" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kokeb-labs-drivers/driver-tmp117" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kokeb-labs-drivers/driver-tmp117
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../quickstart/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Get started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api-guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api-reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TMP117 Driver" class="md-nav__button md-logo" aria-label="TMP117 Driver" data-md-component="logo">
+      
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false" class="kb-mark">
+    <g transform="translate(1.28 1.28) scale(0.12000)"><path d="M232,66 Q265.29,246.71 446,280 Q265.29,313.29 232,494 Q198.71,313.29 18,280 Q198.71,246.71 232,66 Z" fill="#F4B942"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#0E1726" stroke="#0E1726" stroke-width="24" stroke-linejoin="round"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#D9773B"/></g>
+  </svg>
+
+    </a>
+    TMP117 Driver
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kokeb-labs-drivers/driver-tmp117" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kokeb-labs-drivers/driver-tmp117
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../quickstart/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contract
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#promises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Promises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#switch-off-decision-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switch-off decision table
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Switch-off decision table">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shutdown-path-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shutdown path states
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#residual-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Residual risks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#depends-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Depends on
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#threading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Threading
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deviations-from-the-standard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deviations from the standard
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ambiguities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ambiguities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../api-guide/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../api-reference/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#promises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Promises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#switch-off-decision-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switch-off decision table
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Switch-off decision table">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shutdown-path-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shutdown path states
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#residual-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Residual risks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#depends-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Depends on
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#threading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Threading
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deviations-from-the-standard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deviations from the standard
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/kokeb-labs-drivers/driver-tmp117/edit/main/docs/contract.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="contract">Contract<a class="headerlink" href="#contract" title="Permanent link">&para;</a></h1>
+<p>What the TMP117 driver promises, what it needs, and the rules a caller follows.</p>
+<p>The driver inherits the <a href="https://github.com/kokeb-labs/.github/blob/main/standards/driver.md">Kokeb Labs driver contract</a>;
+this page states only what is specific to it. A change to anything here is a breaking change, listed under
+<strong>Breaking</strong> in the <a href="../changelog/">changelog</a>.</p>
+<h2 id="promises">Promises<a class="headerlink" href="#promises" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The constructor is <code>noexcept</code>, stores the address and the configuration, does no I/O and cannot fail.</li>
+<li><code>EnsureInitialized()</code> is the only way to start the driver. Its first call checks the address and the stored
+  configuration (<code>InvalidArgument</code>, nothing sent), brings the bus up, waits for the chip's power-up load, checks
+  Device_ID, reads EEPROM_UL and locks the EEPROM when the unlock bit is set (see below), writes the limits, the
+  offset and the configuration, and reads them back. On any failure the driver stays
+  uninitialised and the next call starts again from the beginning; once it has succeeded, later calls return <code>Ok</code>
+  with no I/O.</li>
+<li>Every call that touches the chip returns <code>Error::NotInitialized</code> before <code>EnsureInitialized()</code> succeeds and sends
+  nothing. No call initialises or resets the chip as a side effect.</li>
+<li><strong>An argument that is refused sends nothing.</strong> <code>InvalidArgument</code> is decided before the first transfer, in every
+  call.</li>
+<li><strong>The driver never writes a register it does not own.</strong> Temp_Result and Device_ID are read-only, and EEPROM1 and
+  EEPROM3 hold the traceability identifier the datasheet says not to erase; <code>RegisterBus::WriteWord</code> refuses their
+  pointers and every pointer outside the map. <code>ProgramPowerOnDefaults()</code> reads the two traceability words before and
+  after and reports a change.</li>
+<li><strong>The EEPROM is locked again on every path.</strong> <code>ProgramPowerOnDefaults()</code> and <code>ProgramUserWord()</code> never return with
+  the unlock bit left set unless the chip refused to lock; then they return <code>EepromVerifyFailed</code> when that is the only
+  failure, and the driver is uninitialised. After an earlier error (a <code>Timeout</code> of a word that never finished, a <code>Bus</code>
+  error) the first error is returned and the lock may still not have taken: power-cycle the chip.</li>
+<li><strong>A write never programs EEPROM by accident.</strong> With the unlock bit set, every write to a programmable register is
+  stored in EEPROM as a power-on default (7.5.1.2, p. 18). A restart of the host during programming, or a lock that did
+  not take, leaves the chip so. <code>EnsureInitialized()</code> therefore reads EEPROM_UL before its first register write; when
+  EUN reads 1 it writes EUN = 0 and reads it back, and when it cannot confirm the lock it returns
+  <code>EepromVerifyFailed</code> and has written nothing else (<a href="../ambiguities/#a21-start-up-and-switch-off-on-an-unlocked-chip">A21</a>).
+  Outside <code>ProgramPowerOnDefaults()</code> and <code>ProgramUserWord()</code> no call programs an EEPROM word, except in the two
+  <a href="#residual-risks">residual risks</a> of A21: switch-off row U5, and one bit flipped on the bus in the first EEPROM_UL
+  reply.</li>
+<li><strong>No write follows reset evidence.</strong> When the driver sees that the chip restarted (the setting bits of
+  Configuration differ from its copy, EEPROM_Busy is set unexpectedly, or a result of <code>8000h</code> follows a real one), the
+  call returns <code>UnexpectedReset</code>, the driver is uninitialised, and no further write is sent until
+  <code>EnsureInitialized()</code> has run again, except the switch-off, which follows its
+  <a href="#switch-off-decision-table">decision table</a>. A reset to exactly the values the driver wrote is invisible
+  (<a href="../ambiguities/#a9-a-reset-to-identical-values">A9</a>), and so is a reset that changes only the limits or the
+  offset (<a href="#residual-risks">residual risks</a>).</li>
+<li><strong><code>8000h</code> is never a temperature.</strong> It reads as <code>NoMeasurement</code> before the first conversion and as
+  <code>UnexpectedReset</code> after one.</li>
+<li><strong>Switch-off always sends, except to a driver that never reached the chip (N1), to a chip that reads unlocked or
+  busy, to a chip that answers nothing (U2), or to another device.</strong> <code>Deinitialize()</code>
+  and <code>SetMode(Mode::Shutdown)</code> run one routine whose rules are the <a href="#switch-off-decision-table">decision table</a>
+  below. An initialised driver always sends the one Configuration write with MOD = 01, whatever doubt it holds: a
+  write in doubt is settled first by <code>SetMode()</code>, and when the settle read fails the shutdown write is sent anyway;
+  when the settle finds reset evidence the lost-track rows apply. A driver that lost track of the chip
+  (uninitialised after a failed programming, a reset or a start-up) reads EEPROM_UL first and never writes after a
+  clean reply with EEPROM_Busy set: the chip is in its power-up load, which ignores writes, or programming a word,
+  which forbids them (7.5.1.1 and 7.5.1.2, p. 18). It waits 7 ms and reads again, twice at most per call, and returns
+  <code>Timeout</code> with nothing sent when the chip is still busy. It then writes the EEPROM lock (EUN = 0, a write that
+  programs no EEPROM) and reads it back. Only the read that follows the last lock write decides: when it is clean and
+  shows EUN = 1 the call returns <code>EepromVerifyFailed</code> and sends nothing, because the write would be programmed as the
+  power-on default (<a href="../ambiguities/#a21-start-up-and-switch-off-on-an-unlocked-chip">A21</a>); a failed or garbled read
+  is no evidence and the shutdown write goes out. A chip that answers neither the read nor the lock write gets nothing
+  more (<code>Bus</code>). After a Device_ID mismatch the driver reads Device_ID once more and sends nothing when another part
+  answers (<code>DeviceIdMismatch</code>).</li>
+<li><strong>A failed write is not forgotten.</strong> The driver keeps its copy of the chip's configuration only for what the chip
+  accepted; a write that failed is read back before the next change and the copy follows the chip.</li>
+<li><strong>The alert flags are not lost.</strong> The three flags the chip clears on a read of Configuration are latched by every
+  read the driver makes (<code>GetLatchedStatus()</code>).</li>
+<li>Every port failure propagates as <code>Error::Bus</code>; no getter returns a stale or zero value after a failed read.</li>
+<li>Every wait is bounded: the power-up load by <code>Config::reset_timeout_ms</code>, an EEPROM word by
+  <code>Config::eeprom_timeout_ms</code>, a one-shot by <code>(n + 1) x 17.5 ms</code> for <code>n</code> averaged conversions, <code>WaitDataReady()</code> by its
+  argument (at most 20 s). The switch-off of a driver that lost track of the chip makes at most 8 transfers (9 after
+  a Device_ID mismatch) and waits at most 14 ms (two 7 ms waits for a busy EEPROM), whatever the bus returns;
+  <code>SetMode()</code> adds the settle reads (at most 5) in front. Deadlines are poll counts, not a clock: a port whose failed
+  transfer itself takes long (an SMBus timeout of 25 ms to 35 ms) stretches a call by that time per poll.</li>
+<li><code>Config{}</code> equals the datasheet reset values, proved by <code>static_assert</code>.</li>
+<li>A missing <code>DelayUs()</code> is a compile error; a missing <code>ReadAlertPin()</code> gives <code>Error::Unsupported</code> from
+  <code>ReadAlertPin()</code>; a missing <code>Log()</code> logs nothing. A misdeclared hook is a compile error.</li>
+<li><code>Deinitialize()</code> that returns <code>Ok</code> leaves the chip in shutdown, its lowest-current state, except row N1 (the driver
+  never reached the chip, so nothing is sent: a chip that converts from its power-on defaults keeps converting) and
+  the <a href="#residual-risks">residual risks</a> (a reset the driver cannot see, row U5). A boot path that needs the chip in
+  shutdown after a warm reset calls <code>EnsureInitialized()</code> first, then <code>Deinitialize()</code> or <code>SetMode(Mode::Shutdown)</code>.</li>
+<li>The bus-wide general-call reset is sent only with <code>Config::allow_general_call</code>. The SMBus alert response is not
+  supported and sends nothing.</li>
+</ul>
+<h2 id="switch-off-decision-table">Switch-off decision table<a class="headerlink" href="#switch-off-decision-table" title="Permanent link">&para;</a></h2>
+<p>The specification of <code>Deinitialize()</code> and <code>SetMode(Mode::Shutdown)</code>; the code follows it row by row (<code>switchOff()</code>
+and <code>lockBeforeSwitchOff()</code> in <code>src/tmp117.ipp</code>), and each row has a test in
+<a href="https://github.com/kokeb-labs-drivers/driver-tmp117/blob/f04e288fd6e4c04796361e4c94e63a7c40108ff8/tests/test_switch_off.cpp"><code>tests/test_switch_off.cpp</code></a> named after it. An EEPROM_UL reply is <em>clean</em> when bits
+13:0 read 0 (Table 7-10, p. 30); a failed read and a reply with any of those bits set are <em>no evidence</em>. A clean reply
+is <em>busy</em> when EEPROM_Busy (bit 14) reads 1, whatever EUN reads. <code>R</code> is a read of EEPROM_UL, <code>L</code> the lock write
+(EEPROM_UL = 0000h), <code>S</code> the Configuration write with MOD = 01, <code>C</code> a Configuration write of <code>SetMode()</code> (MOD = 01 from
+the copy), <code>D</code> a read of Device_ID.</p>
+<table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Driver</th>
+<th>First read <code>R</code></th>
+<th>Then, per attempt (at most 2): <code>L</code>, then <code>R</code></th>
+<th>Transfers sent</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N1</td>
+<td>Never reached the chip</td>
+<td>not sent</td>
+<td></td>
+<td>none</td>
+<td><code>Deinitialize()</code>: <code>Ok</code>; <code>SetMode()</code>: <code>NotInitialized</code></td>
+</tr>
+<tr>
+<td>N2</td>
+<td>Last Device_ID read was another part</td>
+<td><code>D</code> first: another part's word</td>
+<td></td>
+<td><code>D</code></td>
+<td><code>DeviceIdMismatch</code>, nothing else sent</td>
+</tr>
+<tr>
+<td>I1</td>
+<td>Initialised, <code>SetMode()</code></td>
+<td>not sent</td>
+<td></td>
+<td>settle reads (any result), <code>C</code></td>
+<td>the write's status; the copy follows the chip</td>
+</tr>
+<tr>
+<td>I2</td>
+<td>Initialised, <code>Deinitialize()</code></td>
+<td>not sent</td>
+<td></td>
+<td><code>S</code></td>
+<td>the write's status; uninitialised afterwards</td>
+</tr>
+<tr>
+<td>I3</td>
+<td>Initialised, <code>SetMode()</code>, the settle finds reset evidence</td>
+<td>as the U and W rows</td>
+<td></td>
+<td>settle reads, then a U row</td>
+<td>as that U row</td>
+</tr>
+<tr>
+<td>U1</td>
+<td>Lost track</td>
+<td>clean, EUN = 0, not busy</td>
+<td></td>
+<td><code>R S</code></td>
+<td>the write's status</td>
+</tr>
+<tr>
+<td>U2</td>
+<td>Lost track</td>
+<td>failed</td>
+<td>first <code>L</code> not acknowledged: stop</td>
+<td><code>R L</code></td>
+<td><code>Bus</code></td>
+</tr>
+<tr>
+<td>U3</td>
+<td>Lost track</td>
+<td>EUN = 1, failed or no evidence</td>
+<td>an <code>R</code> after an <code>L</code> reads clean EUN = 0, not busy: stop</td>
+<td><code>R (L R){1,2} S</code></td>
+<td>the write's status</td>
+</tr>
+<tr>
+<td>U4</td>
+<td>Lost track</td>
+<td>EUN = 1, failed or no evidence</td>
+<td>the <code>R</code> after the last <code>L</code> reads clean EUN = 1, not busy</td>
+<td><code>R L R L R</code></td>
+<td><code>EepromVerifyFailed</code>, nothing else sent</td>
+</tr>
+<tr>
+<td>U5</td>
+<td>Lost track</td>
+<td>EUN = 1, failed or no evidence</td>
+<td>the <code>R</code> after the last <code>L</code> failed or is no evidence</td>
+<td><code>R L R L R S</code></td>
+<td>the write's status, a warning logged</td>
+</tr>
+<tr>
+<td>U6</td>
+<td>Lost track</td>
+<td>busy after two waits</td>
+<td>or an <code>R</code> after an <code>L</code> busy after the second wait</td>
+<td><code>R R R</code>, or ending in <code>R</code></td>
+<td><code>Timeout</code>, nothing else sent; call again</td>
+</tr>
+<tr>
+<td>W1</td>
+<td>Lost track, chip in its power-up load</td>
+<td>clean, busy, EUN = 0</td>
+<td>any <code>R</code> busy the same way</td>
+<td>the busy <code>R</code>, then 7 ms, <code>R</code> again</td>
+<td>as the row the next <code>R</code> leads to</td>
+</tr>
+<tr>
+<td>W2</td>
+<td>Lost track, a word being programmed</td>
+<td>clean, busy, EUN = 1</td>
+<td>any <code>R</code> busy the same way</td>
+<td>the busy <code>R</code>, then 7 ms, <code>R</code> again</td>
+<td>as the row the next <code>R</code> leads to</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>Lost track after a reset command that failed but took effect</td>
+<td>clean, busy (the load)</td>
+<td></td>
+<td>as W1</td>
+<td>as W1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>No write follows a clean busy <code>R</code>. The two 7 ms waits (<code>kEepromProgramUs</code>, the typical programming time of 6.6,
+  p. 7, and over four times the 1.5 ms load of A1) are a budget for the whole call, as in Figure 7-7 (p. 19: wait,
+  then read EEPROM_Busy again). The datasheet prints no maximum; a chip still busy after 14 ms gets nothing (U6), and
+  the caller calls again. A failed or garbled read is not busy: it is no evidence, as everywhere in the table.</li>
+<li>Evidence never carries over: a clean EUN = 1 seen before a lock write says nothing about that write (U5 after an
+  earlier clean EUN = 1 still sends). The lock is written whatever the first read returned, except in U1, W1 and U6.</li>
+<li>U2 counts the <code>R</code> read just before the first <code>L</code>: after a busy reply and its wait, a failed <code>R</code> and a NACKed <code>L</code>
+  also stop (three transfers: <code>R R L</code>).</li>
+<li>N2 needs another part's word on that <code>D</code>: a failed read, DID 117h, or 0000h or FFFFh (the words of a line stuck at
+  0 or 1, which may still pass writes) go on by the other rows. Without a mismatch there is no <code>D</code>.</li>
+<li>R1: a soft or general-call reset whose ACK was lost (<code>SoftReset()</code>, <code>GeneralCallReset()</code>, the relock of
+  <code>ProgramPowerOnDefaults()</code> and <code>ProgramUserWord()</code>) leaves the driver uninitialised and the chip in its load; the
+  first <code>R</code> shows the load and W1 applies.</li>
+<li>U5 is the residual risk of A21: when every lock write was lost or did not take and no read-back succeeded, the
+  shutdown word is programmed as a power-on default, and it is sent blind: a chip busy at that moment ignores it.
+  Start-up never takes that risk: a lock not confirmed by a clean EUN = 0 refuses there, a garbled read included.</li>
+<li>The <code>S</code> of the lost-track rows carries the driver's copy of every field, not only MOD (FC-12): after a reset the
+  alert polarity, alert function, averaging and cycle time of the copy replace the chip's EEPROM defaults. Harmless in
+  shutdown; a board whose ALERT level comes only from programmed defaults sees the copy's polarity.</li>
+<li>Tests: N1, N2 (twice), I1, I2, I3, U1 to U6, W1 (twice), W2, R1 ("Switch-off row ..."), U3 also for a NACKed first
+  lock write, U4 also after a failed first read-back, U5 also for every read failing and for the residual risk; a
+  sweep fails every subset of the first eight transfers of the call on a locked, an unlocked, an unlockable, a
+  programming and a loading chip, and checks the rows, the 8-transfer and 14 ms bounds, the busy rule, the effect
+  (<code>Ok</code> after a confirmed lock leaves the chip in shutdown) and the programming rule. The fuzz target checks the
+  frames of U2 to U6 and N2 with no exclusion, the busy rule, and the effect: a switch-off that returns <code>Ok</code> leaves
+  the model in shutdown outside the residual risks below: a write of the call lost or NACKed, a reply altered in the
+  call, an initialised switch-off whose write the chip ignored although no read of the call showed EEPROM_Busy, and U5
+  (<code>tests/fuzz/fuzz_tmp117.cpp</code>). A read that shows EEPROM_Busy, in a settle or anywhere else, is reset evidence and is
+  never excluded: the I3 tests "a settle read that shows EEPROM_Busy is reset evidence" (PROBE-R5-1) and "a lost ACK, a
+  power cycle, then SetMode(Shutdown)" (D-2) and the corpus input <code>regress-settle-reads-eeprom-busy</code> pin it.</li>
+</ul>
+<h3 id="shutdown-path-states">Shutdown path states<a class="headerlink" href="#shutdown-path-states" title="Permanent link">&para;</a></h3>
+<p>What the driver knows before the call, what it does, and where it ends. "Lost track" is <code>IsInitialized()</code> false after
+a start-up reached the chip.</p>
+<table>
+<thead>
+<tr>
+<th>State before</th>
+<th>Event in the call</th>
+<th>Next state</th>
+<th>Chip afterwards</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Never started</td>
+<td><code>Deinitialize()</code> or <code>SetMode(Shutdown)</code></td>
+<td>Never started</td>
+<td>untouched</td>
+</tr>
+<tr>
+<td>Initialised</td>
+<td><code>SetMode(Shutdown)</code>, write acknowledged</td>
+<td>Initialised, copy in shutdown</td>
+<td>shutdown</td>
+</tr>
+<tr>
+<td>Initialised</td>
+<td><code>SetMode(Shutdown)</code>, write failed</td>
+<td>Initialised, write in doubt (settled by the next call)</td>
+<td>unknown</td>
+</tr>
+<tr>
+<td>Initialised</td>
+<td><code>SetMode(Shutdown)</code>, the settle finds reset evidence (I3)</td>
+<td>Lost track, then as the U rows</td>
+<td>as the U rows</td>
+</tr>
+<tr>
+<td>Initialised</td>
+<td><code>Deinitialize()</code></td>
+<td>Lost track</td>
+<td>shutdown if the write was acknowledged</td>
+</tr>
+<tr>
+<td>Lost track</td>
+<td>lock confirmed or not read back (U1, U3, U5)</td>
+<td>Lost track</td>
+<td>shutdown if the write was acknowledged</td>
+</tr>
+<tr>
+<td>Lost track</td>
+<td>EUN reads 1 after the last lock write (U4)</td>
+<td>Lost track</td>
+<td>unchanged, unlocked: power-cycle it</td>
+</tr>
+<tr>
+<td>Lost track</td>
+<td>no answer (U2)</td>
+<td>Lost track</td>
+<td>unchanged; the next call starts again from the first read</td>
+</tr>
+<tr>
+<td>Lost track</td>
+<td>EEPROM_UL still busy after 14 ms (U6)</td>
+<td>Lost track</td>
+<td>unchanged; call again</td>
+</tr>
+<tr>
+<td>Any, after a Device_ID mismatch</td>
+<td>another part answers Device_ID (N2)</td>
+<td>Lost track</td>
+<td>that device untouched</td>
+</tr>
+<tr>
+<td>Lost track</td>
+<td><code>EnsureInitialized()</code> succeeds</td>
+<td>Initialised</td>
+<td>as configured, lock confirmed</td>
+</tr>
+</tbody>
+</table>
+<h2 id="residual-risks">Residual risks<a class="headerlink" href="#residual-risks" title="Permanent link">&para;</a></h2>
+<p>The owner's rule: an event so improbable that no reasonable design defends against it is documented here, not
+engineered. Each entry names the finding it comes from and, where one exists, the test that pins it.</p>
+<ul>
+<li><strong>One flipped EUN bit in the first EEPROM_UL reply (R4-3, FC-9, F-A3, B-5).</strong> It needs a chip left unlocked by an
+  interrupted programming and a bus error that turns exactly bit 15 of exactly that reply from 1 to 0 (or a line that
+  goes stuck at 0 on that read) with bits 13:0 still clean. The bus has no CRC, so the driver takes it for a lock:
+  start-up programs one limit word and then fails its read-back (<code>BadReply</code>); switch-off row U1 programs the
+  shutdown word as a power-on default. At most one EEPROM word ("regress-r4-3").</li>
+<li><strong>A reset the driver cannot see, within the 1.5 ms load before an initialised switch-off or setter (FC-10,
+  F-A1).</strong> A chip-only brown-out, another master's general call, or another driver object's <code>GeneralCallReset()</code> on
+  the same bus. Rows I1 (no write in doubt) and I2 send with no read first, so the write lands in the load and is
+  ignored, and a setter's write is lost the same way; the call returns <code>Ok</code> (or <code>Bus</code> under the NACK reading of A14).
+  The next call that reads Configuration sees the reset (<code>UnexpectedReset</code>). The same holds for any state in which
+  the chip ignores writes and that no read of the session has shown, such as an EEPROM still busy that an earlier
+  corrupted reply hid.</li>
+<li><strong>Start-up and the relock write the lock after the busy deadline (FC-11).</strong> <code>tryLock()</code> waits for EEPROM_Busy up to
+  <code>Config::eeprom_timeout_ms</code> and then writes EUN = 0 whatever it reads. Only a chip still programming after that
+  deadline (50 ms by default, about seven times the typical time) gets a write while busy; that chip is faulty, the
+  call already reports <code>Timeout</code> or <code>EepromVerifyFailed</code>, and the lock write programs nothing.</li>
+<li><strong>The lost-track shutdown word carries the copy (FC-12).</strong> See the decision table notes.</li>
+<li><strong>A reset that changes only the limits or the offset (F-A5).</strong> Reset evidence is read from Configuration, EEPROM_Busy
+  and 8000h. When the EEPROM holds the driver's Configuration word but other limits or another offset, a reset outside
+  the first conversion passes <code>ReadStatus()</code> and <code>CheckHealth()</code>; see <a href="../ambiguities/#a9-a-reset-to-identical-values">A9</a>.</li>
+<li><strong>An offset below about -200 °C (F-A8).</strong> It saturates a cold result to 8000h, which reads as <code>NoMeasurement</code> or
+  <code>UnexpectedReset</code> (<a href="../ambiguities/#a7-the-offset-at-the-minimum-and-8000h">A7</a>); no real use needs it.</li>
+<li><strong>Corruption the bus cannot reveal (B-6).</strong> A write whose data is corrupted on the way (no CRC), a read reply that
+  repeats the previous transfer, and a legitimate 8000h caused by offset saturation.</li>
+<li><strong>A part swapped, or an address clash, after a good start-up (D-1).</strong> A Device_ID mismatch seen by a read
+  (<code>ReadTemperatureRaw(Verify::Device)</code>, a status poll) returns <code>DeviceIdMismatch</code>, but only <code>CheckHealth()</code> uninitialises
+  the driver; the setters and <code>ProgramUserWord()</code> that follow still write to whatever answers at the
+  address, and <code>ProgramUserWord()</code> can program one word of it before its final identity read fails. It needs a part
+  exchanged or a second device appearing on a running bus; the switch-off (N2) never writes to another part. After a
+  <code>DeviceIdMismatch</code>, call <code>Deinitialize()</code> and <code>EnsureInitialized()</code> before any other call.</li>
+<li><strong>Rows W1, W2, R1 and U6 rest on one truthful EEPROM_UL reply (D-3).</strong> One reply that reads 0000h (a stuck-0 line) or
+  has bit 14 flipped, at the moment the chip is loading or programming, reads as "clean, EUN = 0, not busy": row U1
+  sends the shutdown write into the load or into a programming word, where it is ignored or forbidden. A second reset
+  between the last read and that write, and a reset no read has shown before an initialised switch-off or setter, are
+  the same class as the one above (FC-10). Whole-call failure of every read while the chip loads is row U5.</li>
+<li><strong>Stale one-shot result under the alternative reading of A12 (D-4).</strong> If a Configuration read in therm mode does not
+  clear Data_Ready, a Data_Ready left by an earlier continuous conversion that nobody read can complete a one-shot
+  at once: <code>ReadOneShotMilliC()</code> returns the previous result with <code>Ok</code> while the new conversion still runs. The chip
+  ends in shutdown on its own, so no switch-off is affected; read Temp_Result once (or call <code>ReadTemperatureMilliC()</code>)
+  before starting a one-shot in therm mode if the board's chip reads that way
+  (<a href="../ambiguities/#a12-data_ready-in-therm-mode">A12</a>).</li>
+<li><strong>Row U5, a write sent blind.</strong> No clean read-back of the last lock write: the shutdown word is sent, programmed
+  when the lock did not take (<a href="../ambiguities/#a21-start-up-and-switch-off-on-an-unlocked-chip">A21</a>), and ignored by
+  a chip that is busy at that moment.</li>
+</ul>
+<h2 id="depends-on">Depends on<a class="headerlink" href="#depends-on" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Dependency</th>
+<th>Version</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A C++20 compiler</td>
+<td>GCC 10, Clang 13 or later</td>
+<td>Concepts constrain the port</td>
+</tr>
+<tr>
+<td>CMake</td>
+<td>3.16 or later</td>
+<td>Generates <code>tmp117_version.h</code></td>
+</tr>
+<tr>
+<td>Your port</td>
+<td></td>
+<td>The bus, 5 kHz to 400 kHz, with a repeated START and address 0 for one byte; the delay; optionally the ALERT pin and logging (<a href="../porting/">Porting</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>Nothing else: no RTOS, no SDK, no other repository of the org.</p>
+<h2 id="threading">Threading<a class="headerlink" href="#threading" title="Permanent link">&para;</a></h2>
+<p>The driver is not thread-safe and takes no lock. Use each driver object from one task at a time, or guard every
+call on it with one mutex; the layer that owns the driver owns that lock, and the bus lock when several chips
+share a bus. Nothing may run in an ISR: every call can block for a bus transfer or a delay. Separate objects
+share no state.</p>
+<h2 id="errors">Errors<a class="headerlink" href="#errors" title="Permanent link">&para;</a></h2>
+<p><code>tmp117::Error</code> inside <code>tmp117::Result&lt;T&gt;</code>. Values 0 to 9 are the shared base set; this driver returns every one of
+them except <code>Crc</code> and <code>DeviceFault</code>, because the TMP117's bus has no checksum and the chip reports no sensing fault.
+Values from 16 are specific to this chip.</p>
+<table>
+<thead>
+<tr>
+<th><code>Error</code></th>
+<th>Value</th>
+<th>Returned when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ok</code></td>
+<td>0</td>
+<td>The call succeeded</td>
+</tr>
+<tr>
+<td><code>NotInitialized</code></td>
+<td>1</td>
+<td><code>EnsureInitialized()</code> has not succeeded, a reset was seen, or <code>Deinitialize()</code> ran since</td>
+</tr>
+<tr>
+<td><code>InvalidArgument</code></td>
+<td>2</td>
+<td>A <code>Config</code> field or argument is out of range (<code>Validate()</code>); nothing was sent</td>
+</tr>
+<tr>
+<td><code>Bus</code></td>
+<td>3</td>
+<td>A port hook returned <code>false</code></td>
+</tr>
+<tr>
+<td><code>Timeout</code></td>
+<td>4</td>
+<td>The power-up load, a conversion, <code>WaitDataReady()</code> or an EEPROM word did not finish in time; a switch-off found the EEPROM still busy after 14 ms (nothing sent)</td>
+</tr>
+<tr>
+<td><code>DeviceIdMismatch</code></td>
+<td>5</td>
+<td>Device_ID is not <code>0x117</code> in bits 11:0; a switch-off found another part (nothing sent)</td>
+</tr>
+<tr>
+<td><code>Crc</code></td>
+<td>6</td>
+<td>Never returned (no CRC on this chip)</td>
+</tr>
+<tr>
+<td><code>Busy</code></td>
+<td>7</td>
+<td>A one-shot is pending</td>
+</tr>
+<tr>
+<td><code>DeviceFault</code></td>
+<td>8</td>
+<td>Never returned (the chip reports no sensing fault)</td>
+</tr>
+<tr>
+<td><code>Unsupported</code></td>
+<td>9</td>
+<td><code>ReadAlertPin()</code> without the hook, <code>GeneralCallReset()</code> without the opt-in, <code>SmbusAlertResponse()</code></td>
+</tr>
+<tr>
+<td><code>UnexpectedReset</code></td>
+<td>16</td>
+<td>Reset evidence: the chip restarted behind the driver's back. The driver is uninitialised afterwards</td>
+</tr>
+<tr>
+<td><code>NoMeasurement</code></td>
+<td>17</td>
+<td>Temp_Result reads <code>8000h</code> and no result has been seen since the start</td>
+</tr>
+<tr>
+<td><code>EepromVerifyFailed</code></td>
+<td>18</td>
+<td>The EEPROM readback differs from what was written, or the chip could not be locked again</td>
+</tr>
+<tr>
+<td><code>BadReply</code></td>
+<td>19</td>
+<td>A bit that must read 0 reads 1, or a register does not read back what was written</td>
+</tr>
+</tbody>
+</table>
+<p>The <a href="../api-guide/#handle-errors">API guide</a> says what to do about each.</p>
+<h2 id="memory">Memory<a class="headerlink" href="#memory" title="Permanent link">&para;</a></h2>
+<p>No heap, no exceptions, no RTTI, no <code>std::function</code>, no <code>std::string</code>, no <code>printf</code> and no static mutable state. A
+driver object holds the bus reference, the address, two <code>Config</code> copies, a few flags and the transfer buffers (a
+3-byte write and a 2-byte read): about 100 bytes (104 with the mock port). No stack buffer is larger than 8 bytes
+(the register words of a programming call); the setters copy a <code>Config</code> (32 bytes) on the stack.</p>
+<h2 id="platform">Platform<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h2>
+<p>Platform-free: the same code runs on any target with a C++20 compiler, including the host tests. The ESP-IDF port
+in <a href="../examples/"><code>examples/esp32</code></a> is an example, not part of the driver.</p>
+<h2 id="deviations-from-the-standard">Deviations from the standard<a class="headerlink" href="#deviations-from-the-standard" title="Permanent link">&para;</a></h2>
+<p>None.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../architecture/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Architecture">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Architecture
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../ambiguities/" class="md-footer__link md-footer__link--next" aria-label="Next: Ambiguities">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Ambiguities
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      
+<div class="md-copyright kb-footer">
+  <nav class="kb-footer__links" aria-label="Kokeb Labs">
+    <a href="https://kokeb-labs.github.io/">Kokeb Labs docs</a>
+    <a href="https://github.com/kokeb-labs-drivers">GitHub organisation</a>
+    
+      <a href="https://github.com/kokeb-labs-drivers/driver-tmp117">Source</a>
+      <a href="https://github.com/kokeb-labs-drivers/driver-tmp117/issues">Report an issue</a>
+      <a href="https://github.com/kokeb-labs-drivers/driver-tmp117/blob/main/LICENSE">License</a>
+    
+  </nav>
+  
+    <div class="md-copyright__highlight">Copyright (c) 2026 The driver-tmp117 authors</div>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/kokeb-labs-drivers" target="_blank" rel="noopener" title="Kokeb Labs on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.top", "navigation.footer", "navigation.tracking", "navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit", "content.tabs.link", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+  
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    <script>
+    (function () {
+      function fix() {
+        var buttons = document.querySelectorAll(".md-version__current");
+        for (var i = 0; i < buttons.length; i++) {
+          var b = buttons[i], text = (b.textContent || "").replace(/\s+/g, " ").trim();
+          var label = b.getAttribute("aria-label") || "";
+          if (text && label.toLowerCase().indexOf(text.toLowerCase()) === -1) {
+            b.setAttribute("aria-label", text + ", " + label);
+          }
+        }
+      }
+      fix();
+      if (window.MutationObserver) {
+        new MutationObserver(fix).observe(document.body, {childList: true, subtree: true});
+      }
+    })();
+  </script>
+
+  </body>
+</html>
