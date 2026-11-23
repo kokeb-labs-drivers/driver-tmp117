@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="625" height="447" viewBox="0 0 625 447" role="img" aria-labelledby="read-call-title read-call-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="read-call-title">One call through the layers</title>
+<desc id="read-call-desc">Sequence of one temperature read: your code calls the TMP117 core, which reads Temp_Result through your port, refuses the 8000h value, converts counts and returns a Result.</desc>
+<defs><marker id="read-call-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6C7889"/></marker></defs>
+<rect x="0.5" y="0.5" width="624" height="446" rx="16" fill="#0E131A" stroke="#283241"/>
+<text x="32" y="54.8" font-size="26" font-weight="700" fill="#E8EDF3">One call through the layers</text>
+<rect x="32" y="70.8" width="561" height="1" fill="#252F3C"/>
+<path d="M104.9 144.8 L104.9 450.8" fill="none" stroke="#6C7889" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M304 144.8 L304 450.8" fill="none" stroke="#6C7889" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M520.1 144.8 L520.1 450.8" fill="none" stroke="#6C7889" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M108.9 180.8 L300 180.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#read-call-arrow-rail)"/>
+<path d="M308 224.8 L516.1 224.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#read-call-arrow-rail)"/>
+<path d="M516.1 268.8 L308 268.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#read-call-arrow-rail)"/>
+<path d="M300 416.8 L108.9 416.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#read-call-arrow-rail)"/>
+<rect x="39.9" y="88.8" width="130" height="52" rx="10" fill="#2E1533" stroke="#F0ABFC" stroke-width="1.4"/>
+<rect x="39.9" y="96.8" width="4" height="36" rx="2" fill="#F0ABFC"/>
+<rect x="226.7" y="88.8" width="154.6" height="52" rx="10" fill="#11281A" stroke="#4ADE80" stroke-width="1.4"/>
+<rect x="226.7" y="96.8" width="4" height="36" rx="2" fill="#4ADE80"/>
+<rect x="455.1" y="88.8" width="130" height="52" rx="10" fill="#0F2A28" stroke="#2BB3A3" stroke-width="1.4"/>
+<rect x="455.1" y="96.8" width="4" height="36" rx="2" fill="#2BB3A3"/>
+<rect x="234" y="296.8" width="356.1" height="41" rx="10" fill="#2C2310" stroke="#6A5220" stroke-width="1"/>
+<rect x="234" y="348.8" width="356.1" height="41" rx="10" fill="#2C2310" stroke="#6A5220" stroke-width="1"/>
+<text x="107.9" y="119.3" font-size="15" font-weight="700" text-anchor="middle" fill="#F5D0FE">Your code</text>
+<text x="307" y="119.3" font-size="15" font-weight="700" text-anchor="middle" fill="#BBF7D0">TMP117&lt;Port&gt;</text>
+<text x="523.1" y="119.3" font-size="15" font-weight="700" text-anchor="middle" fill="#A7F3E6">Your port</text>
+<rect x="122" y="156.8" width="164.9" height="20" rx="10" fill="#0E131A"/>
+<text x="204.4" y="171.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">ReadTemperatureMilliC()</text>
+<rect x="312" y="200.8" width="200.1" height="20" rx="10" fill="#0E131A"/>
+<text x="412.1" y="215.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">WriteRead(0x48, 00h, 2 bytes)</text>
+<rect x="336.4" y="244.8" width="151.3" height="20" rx="10" fill="#0E131A"/>
+<text x="412.1" y="259.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">true, high and low byte</text>
+<text x="248" y="321.9" font-size="13" fill="#FDE68A">8000h? NoMeasurement or UnexpectedReset</text>
+<text x="248" y="373.9" font-size="13" fill="#FDE68A">counts x 7.8125 mC</text>
+<rect x="112.9" y="392.8" width="183.1" height="20" rx="10" fill="#0E131A"/>
+<text x="204.4" y="407.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">Result&lt;int32_t&gt;{23456, Ok}</text>
+</svg>

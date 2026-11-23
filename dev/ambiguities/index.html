@@ -1,0 +1,2052 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="C++20 driver for the Texas Instruments TMP117 high-accuracy I2C digital temperature sensor with alert output and on-chip EEPROM.">
+      
+      
+      
+        <link rel="canonical" href="https://kokeb-labs-drivers.github.io/driver-tmp117/latest/ambiguities/">
+      
+      
+        <link rel="prev" href="../contract/">
+      
+      
+        <link rel="next" href="../api-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/kokeb/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Ambiguities - TMP117 Driver</title>
+      
+    
+    
+  
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+  
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.5%207.75A.75.75%200%200%201%207.25%207h1a.75.75%200%200%201%20.75.75v2.75h.25a.75.75%200%200%201%200%201.5h-2a.75.75%200%200%201%200-1.5h.25v-2h-.25a.75.75%200%200%201-.75-.75M8%206a1%201%200%201%201%200-2%201%201%200%200%201%200%202%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%201.5c-2.363%200-4%201.69-4%203.75%200%20.984.424%201.625.984%202.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621%201.49a.75.75%200%200%201-1.484.211c-.04-.282-.163-.547-.37-.847a9%209%200%200%200-.542-.68q-.126-.149-.268-.32C3.201%207.75%202.5%206.766%202.5%205.25%202.5%202.31%204.863%200%208%200s5.5%202.31%205.5%205.25c0%201.516-.701%202.5-1.328%203.259q-.142.172-.268.319c-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751%200%200%201-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848q.113-.133.213-.253c.561-.679.985-1.32.985-2.304%200-2.06-1.637-3.75-4-3.75M5.75%2012h4.5a.75.75%200%200%201%200%201.5h-4.5a.75.75%200%200%201%200-1.5M6%2015.25a.75.75%200%200%201%20.75-.75h2.5a.75.75%200%200%201%200%201.5h-2.5a.75.75%200%200%201-.75-.75%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M6.457%201.047c.659-1.234%202.427-1.234%203.086%200l6.082%2011.378A1.75%201.75%200%200%201%2014.082%2015H1.918a1.75%201.75%200%200%201-1.543-2.575Zm1.763.707a.25.25%200%200%200-.44%200L1.698%2013.132a.25.25%200%200%200%20.22.368h12.164a.25.25%200%200%200%20.22-.368Zm.53%203.996v2.5a.75.75%200%200%201-1.5%200v-2.5a.75.75%200%200%201%201.5%200M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M9.504.43a1.516%201.516%200%200%201%202.437%201.713L10.415%205.5h2.123c1.57%200%202.346%201.909%201.22%203.004l-7.34%207.142a1.25%201.25%200%200%201-.871.354h-.302a1.25%201.25%200%200%201-1.157-1.723L5.633%2010.5H3.462c-1.57%200-2.346-1.909-1.22-3.004zm1.047%201.074L3.286%208.571A.25.25%200%200%200%203.462%209H6.75a.75.75%200%200%201%20.694%201.034l-1.713%204.188%206.982-6.793A.25.25%200%200%200%2012.538%207H9.25a.75.75%200%200%201-.683-1.06l2.008-4.418.003-.006-.004-.009-.006-.006-.008-.001q-.005%200-.009.004%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5%205.782V2.5h-.25a.75.75%200%200%201%200-1.5h6.5a.75.75%200%200%201%200%201.5H11v3.282l3.666%205.76C15.619%2013.04%2014.543%2015%2012.767%2015H3.233c-1.776%200-2.852-1.96-1.899-3.458Zm-2.4%206.565a.75.75%200%200%200%20.633%201.153h9.534a.75.75%200%200%200%20.633-1.153L12.225%2010.5h-8.45ZM9.5%202.5h-3V6c0%20.143-.04.283-.117.403L4.73%209h6.54L9.617%206.403A.75.75%200%200%201%209.5%206Z%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1.75%202.5h10.5a.75.75%200%200%201%200%201.5H1.75a.75.75%200%200%201%200-1.5m4%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5m0%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5M2.5%207.75v6a.75.75%200%200%201-1.5%200v-6a.75.75%200%200%201%201.5%200%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+  <link rel="stylesheet" href="../assets/kokeb/kokeb.css">
+
+    
+      
+    
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="../assets/kokeb/fonts.css">
+  <noscript><link rel="stylesheet" href="../assets/kokeb/fonts.css"></noscript>
+
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+  
+  <meta name="theme-color" content="#0e1726" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1b2140" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kokeb Labs">
+  <meta property="og:title" content="Ambiguities - TMP117 Driver">
+  <meta property="og:description" content="C++20 driver for the Texas Instruments TMP117 high-accuracy I2C digital temperature sensor with alert output and on-chip EEPROM.">
+  <meta property="og:url" content="https://kokeb-labs-drivers.github.io/driver-tmp117/latest/ambiguities/">
+  <meta name="twitter:card" content="summary">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ambiguities" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You are reading the documentation of an older version.
+  <a href="https://kokeb-labs-drivers.github.io/driver-tmp117/"><strong>Go to the latest version.</strong></a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TMP117 Driver" class="md-header__button md-logo" aria-label="TMP117 Driver" data-md-component="logo">
+      
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false" class="kb-mark">
+    <g transform="translate(1.28 1.28) scale(0.12000)"><path d="M232,66 Q265.29,246.71 446,280 Q265.29,313.29 232,494 Q198.71,313.29 18,280 Q198.71,246.71 232,66 Z" fill="#F4B942"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#0E1726" stroke="#0E1726" stroke-width="24" stroke-linejoin="round"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#D9773B"/></g>
+  </svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          
+          <a class="kb-org" href="https://kokeb-labs.github.io/" title="All Kokeb Labs documentation">Kokeb Labs</a>
+          <span class="kb-org__sep" aria-hidden="true">/</span>
+          <span class="md-ellipsis">
+            TMP117 Driver
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Ambiguities
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Follow the system theme"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Follow the system theme" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kokeb-labs-drivers/driver-tmp117" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kokeb-labs-drivers/driver-tmp117
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../quickstart/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Get started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api-guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api-reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TMP117 Driver" class="md-nav__button md-logo" aria-label="TMP117 Driver" data-md-component="logo">
+      
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false" class="kb-mark">
+    <g transform="translate(1.28 1.28) scale(0.12000)"><path d="M232,66 Q265.29,246.71 446,280 Q265.29,313.29 232,494 Q198.71,313.29 18,280 Q198.71,246.71 232,66 Z" fill="#F4B942"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#0E1726" stroke="#0E1726" stroke-width="24" stroke-linejoin="round"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#D9773B"/></g>
+  </svg>
+
+    </a>
+    TMP117 Driver
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kokeb-labs-drivers/driver-tmp117" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kokeb-labs-drivers/driver-tmp117
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../quickstart/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contract/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ambiguities
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ambiguities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decisions-taken-for-the-first-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisions taken for the first release
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decisions taken for the first release">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q1-how-the-chip-is-locked-again-after-programming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q1: how the chip is locked again after programming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q2-limits-in-the-wrong-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q2: limits in the wrong order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q3-smbus-alert-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q3: SMBus alert response
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q4-the-two-waits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q4: the two waits
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-datasheet-leaves-open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the datasheet leaves open
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the datasheet leaves open">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a1-and-a2-the-two-waits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A1 and A2: the two waits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a3-the-user-word-after-a-reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A3: the user word after a reset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a4-is-the-offset-stored-in-eeprom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A4: is the offset stored in EEPROM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a5-what-the-soft-reset-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A5: what the soft reset does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a6-writing-eun-as-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A6: writing EUN as 0
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a7-the-offset-at-the-minimum-and-8000h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A7: the offset at the minimum and 8000h
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a8-at-exactly-the-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A8: at exactly the limit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a9-a-reset-to-identical-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A9: a reset to identical values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a10-limits-in-the-wrong-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A10: limits in the wrong order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a11-the-alert-flag-after-a-one-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A11: the alert flag after a one-shot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a12-data_ready-in-therm-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A12: Data_Ready in therm mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a13-the-revision-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A13: the revision field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a14-writes-during-the-power-up-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A14: writes during the power-up load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a15-the-bus-timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A15: the bus timeout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a16-the-oscillator-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A16: the oscillator accuracy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a17-the-two-traceability-words" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A17: the two traceability words
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a18-other-parts-in-the-family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A18: other parts in the family
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a19-mod-while-a-one-shot-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A19: MOD while a one-shot runs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a20-programming-the-power-on-defaults-with-continuous-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A20: programming the power-on defaults with continuous mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a21-start-up-and-switch-off-on-an-unlocked-chip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A21: start-up and switch-off on an unlocked chip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a22-eeprom_ul-during-the-power-up-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A22: EEPROM_UL during the power-up load
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-safety-tests-use-these" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the safety tests use these
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../api-guide/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../api-reference/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#decisions-taken-for-the-first-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisions taken for the first release
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decisions taken for the first release">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q1-how-the-chip-is-locked-again-after-programming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q1: how the chip is locked again after programming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q2-limits-in-the-wrong-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q2: limits in the wrong order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q3-smbus-alert-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q3: SMBus alert response
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q4-the-two-waits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q4: the two waits
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-datasheet-leaves-open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the datasheet leaves open
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the datasheet leaves open">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a1-and-a2-the-two-waits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A1 and A2: the two waits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a3-the-user-word-after-a-reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A3: the user word after a reset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a4-is-the-offset-stored-in-eeprom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A4: is the offset stored in EEPROM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a5-what-the-soft-reset-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A5: what the soft reset does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a6-writing-eun-as-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A6: writing EUN as 0
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a7-the-offset-at-the-minimum-and-8000h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A7: the offset at the minimum and 8000h
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a8-at-exactly-the-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A8: at exactly the limit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a9-a-reset-to-identical-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A9: a reset to identical values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a10-limits-in-the-wrong-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A10: limits in the wrong order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a11-the-alert-flag-after-a-one-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A11: the alert flag after a one-shot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a12-data_ready-in-therm-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A12: Data_Ready in therm mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a13-the-revision-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A13: the revision field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a14-writes-during-the-power-up-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A14: writes during the power-up load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a15-the-bus-timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A15: the bus timeout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a16-the-oscillator-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A16: the oscillator accuracy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a17-the-two-traceability-words" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A17: the two traceability words
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a18-other-parts-in-the-family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A18: other parts in the family
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a19-mod-while-a-one-shot-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A19: MOD while a one-shot runs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a20-programming-the-power-on-defaults-with-continuous-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A20: programming the power-on defaults with continuous mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a21-start-up-and-switch-off-on-an-unlocked-chip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A21: start-up and switch-off on an unlocked chip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a22-eeprom_ul-during-the-power-up-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A22: EEPROM_UL during the power-up load
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-safety-tests-use-these" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the safety tests use these
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/kokeb-labs-drivers/driver-tmp117/edit/main/docs/ambiguities.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="ambiguities">Ambiguities<a class="headerlink" href="#ambiguities" title="Permanent link">&para;</a></h1>
+<p>Where the datasheet is silent, says two things, or gives only a typical value, and what the driver does about it.</p>
+<!-- generated: datasheet-refs -->
+<details class="abstract">
+<summary>Datasheet sections this page relies on</summary>
+<p>From Texas Instruments SNOSD82D D:</p>
+<ul>
+<li>Power-up, the EEPROM load and the first result: 7.3.1 Power-Up, <a href="https://www.ti.com/lit/gpn/TMP117#page=12">p. 12</a></li>
+<li>EEPROM, unlock and programming: 7.5.1 EEPROM Overview, <a href="https://www.ti.com/lit/gpn/TMP117#page=18">p. 18</a></li>
+<li>SMBus alert response and general call: 7.5.3.1.5 SMBus Alert Function; 7.5.3.1.6 General-Call Reset Function, <a href="https://www.ti.com/lit/gpn/TMP117#page=22">p. 22</a></li>
+<li>Limit registers and the offset register: 7.6.4 THigh_Limit; 7.6.5 TLow_Limit (p. 29); 7.6.9 Temperature Offset (p. 31), <a href="https://www.ti.com/lit/gpn/TMP117#page=29">p. 29</a></li>
+<li>Device ID and the revision field: 7.6.11 Device ID Register, <a href="https://www.ti.com/lit/gpn/TMP117#page=32">p. 32</a></li>
+</ul>
+<p>All of them, with the driver API for each: <a href="../datasheet/">Datasheet map</a>.</p>
+</details>
+<!-- /generated -->
+
+<p>Every row is a reading of SNOSD82D (Rev. D) that could be wrong. The driver picks the reading that is safe when the
+other one is true, and the host model has a switch for each reading, so the whole safety test suite runs under both
+(<code>tests/test_faults.cpp</code>, <code>tests/test_eeprom.cpp</code>). Nothing here was measured on a chip: the driver is at hardware
+level H0, so a bench run is what turns a reading into a fact.</p>
+<h2 id="decisions-taken-for-the-first-release">Decisions taken for the first release<a class="headerlink" href="#decisions-taken-for-the-first-release" title="Permanent link">&para;</a></h2>
+<p>These four questions had more than one reasonable answer; the owner's defaults are recorded here with the knob that
+changes them.</p>
+<h3 id="q1-how-the-chip-is-locked-again-after-programming">Q1: how the chip is locked again after programming<a class="headerlink" href="#q1-how-the-chip-is-locked-again-after-programming" title="Permanent link">&para;</a></h3>
+<p>The datasheet describes the EEPROM unlock bit (EUN) and says the general-call reset or a power cycle clears it. A
+general-call reset resets every device on the bus that answers the general call, not only this chip. The driver
+therefore <strong>locks with a soft reset by default</strong>, after writing EUN = 0 and reading it back, and it sends the
+general-call reset only when the caller sets <code>Config::allow_general_call</code>. If the lock cannot be confirmed and the
+opt-in is off, the call returns <code>EepromVerifyFailed</code> and tells you to power-cycle the chip. The soft-reset word is
+never written into the EEPROM.</p>
+<p><em>Knob:</em> <code>Config::allow_general_call</code> (driver), <code>eun_write_zero_locks</code>, <code>soft_reset_clears_eun</code> (model).</p>
+<h3 id="q2-limits-in-the-wrong-order">Q2: limits in the wrong order<a class="headerlink" href="#q2-limits-in-the-wrong-order" title="Permanent link">&para;</a></h3>
+<p><code>SetLimits()</code> and <code>Validate()</code> <strong>refuse a low limit above the high limit</strong>. See <a href="#a10-limits-in-the-wrong-order">A10</a>.</p>
+<h3 id="q3-smbus-alert-response">Q3: SMBus alert response<a class="headerlink" href="#q3-smbus-alert-response" title="Permanent link">&para;</a></h3>
+<p>The SMBus alert response is a read of the bus-wide address <code>0x0C</code>, in which every alerting device answers and the
+lowest address wins. It cannot be done safely through a port that models one device, and the chip's ALERT pin plus
+<code>ReadStatus()</code> already tell the host which chip alerts. <strong><code>SmbusAlertResponse()</code> returns <code>Unsupported</code> and sends
+nothing</strong> in this release.</p>
+<p><em>Knob:</em> none; the model counts <code>ara_reads</code> to prove nothing is sent.</p>
+<h3 id="q4-the-two-waits">Q4: the two waits<a class="headerlink" href="#q4-the-two-waits" title="Permanent link">&para;</a></h3>
+<p>The datasheet gives the power-up load (1.5 ms) and one EEPROM word (about 7 ms) as typical values only. The driver
+waits the typical time and then polls EEPROM_Busy up to a deadline of <strong>10 ms</strong> and <strong>50 ms</strong>: see
+<a href="#a1-and-a2-the-two-waits">A1 and A2</a>. The switch-off of a driver that lost track of the chip does not poll: it has
+its own budget of two 7 ms waits and returns <code>Timeout</code> with nothing sent when the chip is still busy.</p>
+<h2 id="what-the-datasheet-leaves-open">What the datasheet leaves open<a class="headerlink" href="#what-the-datasheet-leaves-open" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>The question</th>
+<th>What the driver does</th>
+<th>Model knob</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#a1-and-a2-the-two-waits">A1</a></td>
+<td>The power-up load takes 1.5 ms typical, no maximum</td>
+<td>Wait 1.5 ms, then poll EEPROM_Busy, deadline <code>reset_timeout_ms</code> (10 ms)</td>
+<td><code>por_load_us</code></td>
+</tr>
+<tr>
+<td><a href="#a1-and-a2-the-two-waits">A2</a></td>
+<td>One EEPROM word takes about 7 ms typical, no maximum</td>
+<td>Wait 7 ms, then poll, deadline <code>eeprom_timeout_ms</code> (50 ms)</td>
+<td><code>eeprom_program_us</code></td>
+</tr>
+<tr>
+<td><a href="#a3-the-user-word-after-a-reset">A3</a></td>
+<td>EEPROM2 reads 0000h in one place and an unknown value in another</td>
+<td>Never assume its value</td>
+<td><code>eeprom2_reset</code></td>
+</tr>
+<tr>
+<td><a href="#a4-is-the-offset-stored-in-eeprom">A4</a></td>
+<td>Whether Temp_Offset is a stored power-on value</td>
+<td>Program it only when asked, as a power-on value, and read it back</td>
+<td><code>offset_in_eeprom</code></td>
+</tr>
+<tr>
+<td><a href="#a5-what-the-soft-reset-does">A5</a></td>
+<td>Whether a soft reset reloads the EEPROM and clears EUN</td>
+<td>Lock with EUN = 0, then reset, then confirm by reading EUN</td>
+<td><code>soft_reset_clears_eun</code>, <code>soft_reset_reloads</code></td>
+</tr>
+<tr>
+<td><a href="#a6-writing-eun-as-0">A6</a></td>
+<td>Whether writing EUN = 0 locks without a reset</td>
+<td>Always write EUN = 0 first, then confirm</td>
+<td><code>eun_write_zero_locks</code></td>
+</tr>
+<tr>
+<td><a href="#a7-the-offset-at-the-minimum-and-8000h">A7</a></td>
+<td>A saturated minimum could equal the 8000h no-conversion value</td>
+<td>8000h is never a temperature</td>
+<td><code>saturate_min_8001</code></td>
+</tr>
+<tr>
+<td><a href="#a8-at-exactly-the-limit">A8</a></td>
+<td>Whether "exceeds" means above or at the limit</td>
+<td>Documented as strict; the tests pass under both</td>
+<td><code>limit_compare_inclusive</code></td>
+</tr>
+<tr>
+<td><a href="#a9-a-reset-to-identical-values">A9</a></td>
+<td>There is no power-on flag</td>
+<td>Evidence from the setting bits, EEPROM_Busy and 8000h; <code>CheckHealth()</code></td>
+<td>none (a blind case, tested)</td>
+</tr>
+<tr>
+<td><a href="#a10-limits-in-the-wrong-order">A10</a></td>
+<td>Low above high in therm mode is not described</td>
+<td>Refused everywhere</td>
+<td>none (policy)</td>
+</tr>
+<tr>
+<td><a href="#a11-the-alert-flag-after-a-one-shot">A11</a></td>
+<td>Whether a one-shot sets the alert flag by comparison or always</td>
+<td>Treated as by comparison</td>
+<td><code>oneshot_sets_alert</code></td>
+</tr>
+<tr>
+<td><a href="#a12-data_ready-in-therm-mode">A12</a></td>
+<td>Whether a Configuration read in therm mode clears Data_Ready</td>
+<td>Latch Data_Ready on every read</td>
+<td><code>therm_read_clears_dr</code></td>
+</tr>
+<tr>
+<td><a href="#a13-the-revision-field">A13</a></td>
+<td>The Rev field has no defined values</td>
+<td>Accept any, report it</td>
+<td><code>device_rev</code></td>
+</tr>
+<tr>
+<td><a href="#a14-writes-during-the-power-up-load">A14</a></td>
+<td>A write during the load is "ignored": ACK or NACK</td>
+<td>Never write after a reply that shows the load; a reset no read has shown is a residual risk</td>
+<td><code>por_write_nack</code></td>
+</tr>
+<tr>
+<td><a href="#a15-the-bus-timeout">A15</a></td>
+<td>Bus timeout is 35 ms typical and 20 to 40 ms in the table</td>
+<td>Port contract: transactions far below 20 ms</td>
+<td>none (port)</td>
+</tr>
+<tr>
+<td><a href="#a16-the-oscillator-accuracy">A16</a></td>
+<td>The cycle time has no stated accuracy</td>
+<td>A one-shot waits one conversion longer than needed</td>
+<td><code>osc_error_pct</code></td>
+</tr>
+<tr>
+<td><a href="#a17-the-two-traceability-words">A17</a></td>
+<td>One text says not to erase EEPROM1, another words it for EEPROM[1]</td>
+<td>Protect both 05h and 08h</td>
+<td>none (policy)</td>
+</tr>
+<tr>
+<td><a href="#a18-other-parts-in-the-family">A18</a></td>
+<td>TMP116 and TMP119 IDs are not in this datasheet</td>
+<td>Only the TMP117 ID passes, with the A13 consequence</td>
+<td><code>device_id</code></td>
+</tr>
+<tr>
+<td><a href="#a19-mod-while-a-one-shot-runs">A19</a></td>
+<td>What MOD reads after a one-shot, 01 or still 11</td>
+<td>A one-shot is complete when Data_Ready is seen or MOD reads 01; both readings work</td>
+<td><code>oneshot_mod_reads_back_11</code></td>
+</tr>
+<tr>
+<td><a href="#a20-programming-the-power-on-defaults-with-continuous-mode">A20</a></td>
+<td>Conversions restart while the last word is programmed when the defaults are continuous</td>
+<td>Documented; choose shutdown in the defaults</td>
+<td>none (policy)</td>
+</tr>
+<tr>
+<td><a href="#a21-start-up-and-switch-off-on-an-unlocked-chip">A21</a></td>
+<td>The chip can be left unlocked by an interrupted programming</td>
+<td>Read EEPROM_UL at start-up and lock first; start-up writes nothing when the lock cannot be confirmed; switch-off writes the lock, then sends unless the read after the last lock write is clean with EUN = 1</td>
+<td><code>ForceUnlock()</code>, <code>eun_write_zero_locks</code></td>
+</tr>
+<tr>
+<td><a href="#a22-eeprom_ul-during-the-power-up-load">A22</a></td>
+<td>Whether EEPROM_UL can be written, and EUN read, during the load</td>
+<td>No write follows a busy EEPROM_UL reply, so the driver does not depend on it</td>
+<td>none</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a1-and-a2-the-two-waits">A1 and A2: the two waits<a class="headerlink" href="#a1-and-a2-the-two-waits" title="Permanent link">&para;</a></h3>
+<p>SNOSD82D gives 1.5 ms (typical) for the load of the registers from EEPROM after power-up (6.5, p. 7; 7.3.1, p. 12)
+and about 7 ms (typical) per EEPROM word (6.6, p. 7), and prints no maximum for either. A fixed wait of the typical
+time would be wrong on a slow part, so the driver waits that time and then polls EEPROM_Busy (bit 12 of Configuration,
+bit 14 of EEPROM_UL) until it reads 0, up to <code>reset_timeout_ms</code> (10 ms) or <code>eeprom_timeout_ms</code> (50 ms). Start-up and
+programming write nothing before EEPROM_Busy has read 0. If the deadline passes the call returns <code>Timeout</code> and the
+driver stays uninitialised. The switch-off of a driver that lost track of the chip uses neither deadline: after a
+busy EEPROM_UL reply it waits 7 ms and reads again, twice at most in the call (14 ms), and returns <code>Timeout</code> with
+nothing sent when the chip is still busy (<a href="../contract/#switch-off-decision-table">decision table</a>, rows W1, W2, U6).
+The model's <code>por_load_us</code> and <code>eeprom_program_us</code> stretch the times to prove every outcome.</p>
+<p><em>If you know the maximum:</em> raise or lower the two <code>Config</code> fields; they are limited to 1 ms to 1000 ms.</p>
+<h3 id="a3-the-user-word-after-a-reset">A3: the user word after a reset<a class="headerlink" href="#a3-the-user-word-after-a-reset" title="Permanent link">&para;</a></h3>
+<p>The EEPROM2 register is listed with a reset value of 0000h in its own section and with an unknown value in the register
+map, and the overview names four general-purpose words while the map has three (7.5.1.1, 7.6.8, Table 7-3). The driver
+does not use the user word for anything, reads it only in <code>ReadUniqueId()</code>, and writes it only in
+<code>ProgramUserWord()</code>. <code>eeprom2_reset</code> in the model sets its initial value.</p>
+<h3 id="a4-is-the-offset-stored-in-eeprom">A4: is the offset stored in EEPROM<a class="headerlink" href="#a4-is-the-offset-stored-in-eeprom" title="Permanent link">&para;</a></h3>
+<p>Temp_Offset is listed among the registers that load from EEPROM at power-up (Table 7-3, note 1), but the text counts
+the user-programmable words differently. <code>ProgramPowerOnDefaults()</code> programs the offset word because the caller
+passes a <code>Config</code> that has an offset, and it reads the word back after the reset; with <code>offset_in_eeprom = false</code> the
+model keeps the offset out of EEPROM, and the verification then reports <code>EepromVerifyFailed</code> for a non-zero offset
+instead of claiming success.</p>
+<h3 id="a5-what-the-soft-reset-does">A5: what the soft reset does<a class="headerlink" href="#a5-what-the-soft-reset-does" title="Permanent link">&para;</a></h3>
+<p>Table 7-6 describes Soft_Reset (Configuration bit 1) as a 2 ms reset, and the register figure shows it as read-only
+while the table says write. The datasheet does not say whether the soft reset reloads the EEPROM and clears EUN the
+way the general-call reset does. The driver relocks with EUN = 0 (<a href="#a6-writing-eun-as-0">A6</a>), resets
+(soft by default, <a href="#q1-how-the-chip-is-locked-again-after-programming">Q1</a>), then <strong>reads EUN and refuses to
+succeed unless it reads 0</strong>.</p>
+<p>Two consequences are worth knowing:</p>
+<ul>
+<li>If the soft reset does <em>not</em> reload the EEPROM (<code>soft_reset_reloads = false</code>), the verification reads back the
+  registers the driver wrote, not the EEPROM, so the verify step is vacuous: it can pass without the EEPROM holding
+  the values. The only proof is a power cycle and a read of the registers. The tests pin this reading and the docs
+  say so; an application that must be sure powers the chip down once after programming.</li>
+<li>If the soft reset does not clear EUN (<code>soft_reset_clears_eun = false</code>) and writing EUN = 0 does not lock either, the
+  driver falls back to the general-call reset when <code>allow_general_call</code> is set, and otherwise returns
+  <code>EepromVerifyFailed</code> with the chip still unlocked, which is why the error text says to power-cycle it.</li>
+</ul>
+<h3 id="a6-writing-eun-as-0">A6: writing EUN as 0<a class="headerlink" href="#a6-writing-eun-as-0" title="Permanent link">&para;</a></h3>
+<p>The datasheet says the general-call reset or a power cycle clears the unlock bit, and describes EUN as a read/write bit
+without saying that writing 0 locks. The driver writes 0 anyway (up to three attempts, each after waiting for
+EEPROM_Busy to clear, up to <code>eeprom_timeout_ms</code>; after that deadline the lock is written whatever EEPROM_Busy reads,
+a <a href="../contract/#residual-risks">residual risk</a> of a faulty chip) because a locked chip is the safe state, and confirms
+by reading EUN. With <code>eun_write_zero_locks = false</code> the model ignores that write and only a reset locks it.</p>
+<h3 id="a7-the-offset-at-the-minimum-and-8000h">A7: the offset at the minimum and 8000h<a class="headerlink" href="#a7-the-offset-at-the-minimum-and-8000h" title="Permanent link">&para;</a></h3>
+<p>A result that saturates at the minimum would be 8000h, the same word the chip reports before any conversion (7.6.2,
+7.6.9). The driver treats 8000h as "no result" or, after a result was seen, as a reset, and never returns it as a
+temperature. <code>saturate_min_8001</code> makes the model saturate at 8001h instead, which the driver reads as -255.99 °C. If
+your offset can push a real temperature to the lower end, the call returns an error and not a wrong number.</p>
+<h3 id="a8-at-exactly-the-limit">A8: at exactly the limit<a class="headerlink" href="#a8-at-exactly-the-limit" title="Permanent link">&para;</a></h3>
+<p>The text says a result "exceeds" the high limit and is "lower than" the low limit (7.4.4.1, 7.4.4.2). The driver
+documents the strict reading and its tests pass under both: a result one count beyond the limit is flagged in both,
+a result exactly at the limit only with <code>limit_compare_inclusive</code>. A system that must act at the limit should set the
+limit one count (7.8125 m°C) inside it.</p>
+<h3 id="a9-a-reset-to-identical-values">A9: a reset to identical values<a class="headerlink" href="#a9-a-reset-to-identical-values" title="Permanent link">&para;</a></h3>
+<p>The chip has no power-on flag. If it resets and its EEPROM holds exactly the values the driver wrote, nothing in the
+registers changes, and the only trace is that the next result reads 8000h until the first conversion finishes. The
+driver reports <code>UnexpectedReset</code> on any of the three pieces of evidence (setting bits changed, EEPROM_Busy set
+unexpectedly, 8000h after a result), and <code>CheckHealth()</code> re-reads them on demand, but a reset between two
+conversions to identical values can pass unseen. The evidence comes from Configuration only: a reset that reloads
+the driver's Configuration word but other limits or another offset passes too, once the first conversion is done
+(the alert limit and the calibration offset are then the EEPROM's). If that matters, program the power-on defaults so
+a reset restores the configuration, and use <code>Verify::Device</code> with periodic <code>CheckHealth()</code>.</p>
+<h3 id="a10-limits-in-the-wrong-order">A10: limits in the wrong order<a class="headerlink" href="#a10-limits-in-the-wrong-order" title="Permanent link">&para;</a></h3>
+<p>Therm mode with the low limit above the high limit is not described (7.4.4.2). The driver refuses it with
+<code>InvalidArgument</code>, sending nothing, in <code>Validate()</code>, <code>SetLimits()</code>, <code>Configure()</code> and <code>ProgramPowerOnDefaults()</code>.
+The two limits are two register writes, so the driver writes them in the order that never puts the low limit above
+the high limit, in the chip or in its own copy, if the second write fails.</p>
+<h3 id="a11-the-alert-flag-after-a-one-shot">A11: the alert flag after a one-shot<a class="headerlink" href="#a11-the-alert-flag-after-a-one-shot" title="Permanent link">&para;</a></h3>
+<p>7.4.3 says the data-ready and alert flags are set at the end of a one-shot without saying whether the alert flag is set
+by comparison. The driver treats the flags as it does for continuous conversion. <code>oneshot_sets_alert</code> makes the model
+set the flag unconditionally; the tests show that the driver still returns the temperature and does not act on a flag
+alone.</p>
+<h3 id="a12-data_ready-in-therm-mode">A12: Data_Ready in therm mode<a class="headerlink" href="#a12-data_ready-in-therm-mode" title="Permanent link">&para;</a></h3>
+<p>The text says a read of Configuration in therm mode does not clear the alert bits, and is silent about Data_Ready. The
+driver latches Data_Ready on every read, so it is not lost either way (<code>therm_read_clears_dr</code>). Under the reading that
+a Configuration read does not clear it, a Data_Ready left by an unread continuous conversion can complete a one-shot at
+once and <code>ReadOneShotMilliC()</code> returns the previous result: a <a href="../contract/#residual-risks">residual risk</a> (D-4).</p>
+<h3 id="a13-the-revision-field">A13: the revision field<a class="headerlink" href="#a13-the-revision-field" title="Permanent link">&para;</a></h3>
+<p>Device_ID bits 15:12 are the revision; the register figure shows them as unknown and the table gives a reset of 0h. No
+revision value is documented. The driver masks the field, accepts any, and returns it from <code>GetRevision()</code>. The
+consequence is that a TMP119, whose ID is <code>0x2117</code>, reads as revision 2 of a TMP117 and is accepted: the driver cannot
+tell them apart, and it does not claim to. <code>device_rev</code> varies the field in the model. A TMP116 (<code>0x1116</code> in other
+projects) fails the check with <code>DeviceIdMismatch</code>.</p>
+<h3 id="a14-writes-during-the-power-up-load">A14: writes during the power-up load<a class="headerlink" href="#a14-writes-during-the-power-up-load" title="Permanent link">&para;</a></h3>
+<p>The datasheet says writes during the load are ignored and does not say whether they are acknowledged. Start-up and
+the resets write nothing until EEPROM_Busy has read 0 (twice in a row where it matters), and the switch-off of a
+driver that lost track never writes after an EEPROM_UL reply that shows the load (rows W1 and R1, also when a settle
+found the reset first, row I3), so for every path that holds evidence of the reset the answer does not change what
+the driver does. <code>por_write_nack</code> makes the model NACK such writes; the row tests run under both readings.</p>
+<p>One case remains, a <a href="../contract/#residual-risks">residual risk</a>: a reset that no read has shown yet (a chip-only
+brown-out, another master's general call) within 1.5 ms before an initialised switch-off or a setter. Those send
+with no read first, so the write is ignored: under the ACK reading the call returns <code>Ok</code>, under the NACK reading
+<code>Bus</code>. The next call that reads Configuration reports <code>UnexpectedReset</code>.</p>
+<h3 id="a15-the-bus-timeout">A15: the bus timeout<a class="headerlink" href="#a15-the-bus-timeout" title="Permanent link">&para;</a></h3>
+<p>The text gives 35 ms typical for the bus timeout and the table gives 20 ms to 40 ms (7.5.3.1.7, 6.7). The port
+contract asks for SCL of at least 5 kHz and transactions far below 20 ms. The datasheet lists 1 kHz as the lowest SCL
+(6.7, p. 7), but a 3-byte write takes 36 clocks (the address and three bytes, nine each), about 36 ms at 1 kHz, above
+the 20 ms minimum timeout, so 5 kHz is the floor this driver states. The driver has no code for it.</p>
+<h3 id="a16-the-oscillator-accuracy">A16: the oscillator accuracy<a class="headerlink" href="#a16-the-oscillator-accuracy" title="Permanent link">&para;</a></h3>
+<p>Table 7-7 gives nominal cycle times with no tolerance. A one-shot therefore waits <code>(n + 1) x 17.5 ms</code> for <code>n</code>
+averaged conversions: one conversion more than needed. <code>osc_error_pct</code> slows the model's oscillator to show the
+margin holds up to 10 percent.</p>
+<h3 id="a17-the-two-traceability-words">A17: the two traceability words<a class="headerlink" href="#a17-the-two-traceability-words" title="Permanent link">&para;</a></h3>
+<p>The text says the traceability identifier in EEPROM1 and EEPROM3 must not be erased, and one passage words it as
+"EEPROM[1]". The driver protects 05h and 08h both: <code>RegisterBus::WriteWord</code> refuses them, and the EEPROM sequence
+compares them before and after.</p>
+<h3 id="a18-other-parts-in-the-family">A18: other parts in the family<a class="headerlink" href="#a18-other-parts-in-the-family" title="Permanent link">&para;</a></h3>
+<p>The IDs of the TMP116 and the TMP119 come from other projects, not from a datasheet on file, so only <code>0x117</code> in bits
+11:0 passes. The cost is the TMP119 case in <a href="#a13-the-revision-field">A13</a>. <code>device_id</code> in the model changes the ID.</p>
+<h3 id="a19-mod-while-a-one-shot-runs">A19: MOD while a one-shot runs<a class="headerlink" href="#a19-mod-while-a-one-shot-runs" title="Permanent link">&para;</a></h3>
+<p>The datasheet says only that the device "goes to the low-power shutdown mode" when the conversion is done (7.4.3,
+p. 15); what MOD reads afterwards is not stated. Two readings are possible: MOD reads 01 (shutdown) when the
+conversion has finished, or MOD keeps reading 11 until the next write. The driver works with both: a pending one-shot
+is <strong>complete when Data_Ready has been seen since the start, or MOD reads 01</strong>, and while it is pending MOD 11 and
+MOD 01 are both accepted (only MOD 00, the power-on mode, is reset evidence). When the conversion ended with MOD still
+11, the driver treats 11 as shutdown until its next Configuration write, so a later <code>CheckHealth()</code> or settle does
+not read it as a reset. <code>WaitDataReady()</code> returns when the pending one-shot has completed by either rule.</p>
+<p>One window remains open: a one-shot started from continuous mode clears Data_Ready with its pre-read, but a
+continuous conversion that ends between that read and the MOD = 11 write sets it again. The driver then counts the
+one-shot complete on that flag, and <code>ReadOneShotMilliC()</code> returns the continuous conversion's result (a real
+temperature, at most one cycle old). The window is the time between two bus transfers. To avoid it, call
+<code>SetMode(Mode::Shutdown)</code> before <code>StartOneShot()</code>. <em>Bench step, not hardware-verified:</em> start a one-shot from
+continuous mode at the end of a conversion and compare the result with the next one.</p>
+<p>Data_Ready clears on the read that sees it, so the driver remembers it. A raw <code>ReadRegister()</code> of Configuration while
+a one-shot is pending is allowed and remembered the same way; a raw <code>ReadRegister()</code> of Temp_Result (which also clears
+Data_Ready) is refused with <code>Busy</code> while the one-shot is pending, because its value is not valid yet and the driver
+could not see the flag go. The model's <code>oneshot_mod_reads_back_11</code> selects the second reading; the safety suite runs
+under both. <em>Bench step, not hardware-verified:</em> read Configuration after a one-shot and record MOD.</p>
+<h3 id="a20-programming-the-power-on-defaults-with-continuous-mode">A20: programming the power-on defaults with continuous mode<a class="headerlink" href="#a20-programming-the-power-on-defaults-with-continuous-mode" title="Permanent link">&para;</a></h3>
+<p><code>ProgramPowerOnDefaults()</code> writes the defaults, including a continuous MOD, into Configuration while EUN is set. The
+datasheet (7.5.1.2) asks to avoid conversions while the EEPROM is unlocked. Only MOD1 is volatile (Table 7-6, notes 1
+and 2, p. 28): MOD0 is stored, which is how a continuous power-on mode is programmed, so with continuous defaults the
+chip converts from that write on, for the 7 ms of its programming and until the relock reset. The driver writes the
+Configuration word last to keep that window short. Choose <code>Mode::Shutdown</code> in the defaults to avoid it.</p>
+<h3 id="a21-start-up-and-switch-off-on-an-unlocked-chip">A21: start-up and switch-off on an unlocked chip<a class="headerlink" href="#a21-start-up-and-switch-off-on-an-unlocked-chip" title="Permanent link">&para;</a></h3>
+<p>With EUN = 1 every write to a programmable register is stored in EEPROM (7.5.1.2, p. 18, Table 7-10, p. 30), and EUN
+is cleared only by a general-call reset or a power cycle (and, by <a href="#a6-writing-eun-as-0">A6</a>, perhaps by a write of 0).
+A host that restarts during <code>ProgramPowerOnDefaults()</code>, or a lock that failed and was left to a power cycle, leaves the
+chip unlocked while the driver starts again with no memory of it. Writing the limits, the offset and the
+configuration would program them as power-on defaults, and every later setter would program EEPROM again (1000 writes
+minimum endurance, section 6.6).</p>
+<p>What the driver does: after Device_ID and before its first register write, <code>EnsureInitialized()</code> reads EEPROM_UL. With
+EUN = 1 it writes EUN = 0 and reads it back (up to three times, as in the relock). If EUN still reads 1 the call
+returns <code>EepromVerifyFailed</code> (or the bus error of the failed write) and has written nothing else; the application
+power-cycles the chip or sends the general-call reset itself. Start-up never writes anything else without a
+confirmed lock.</p>
+<p>A lock is confirmed only by a clean read-back with EUN = 0: a reply that breaks bits 13:0 is no lock, at start-up as
+in the relock after programming, even when its EUN bit reads 0.</p>
+<p>Switch-off is different, because never switching the chip off is the worse failure (RD-05). Its rules are the
+<a href="../contract/#switch-off-decision-table">switch-off decision table</a>. When the driver is not initialised,
+<code>Deinitialize()</code> and <code>SetMode(Mode::Shutdown)</code> read EEPROM_UL once. EUN = 0 on a clean reply: the shutdown write is
+sent. Otherwise (EUN = 1, a failed read, or a reply that breaks bits 13:0) the driver writes EUN = 0 and reads it
+back, at most twice; the lock write programs no EEPROM. Only the read after the last lock write decides: when it is
+clean and shows EUN = 1, the lock cannot be cleared and the write would be programmed as a power-on default of
+"shutdown" (the chip would then need a power cycle anyway), so it is refused with <code>EepromVerifyFailed</code> and nothing is
+sent. A clean EUN = 1 seen before a later lock write is stale and never refuses; a failed or garbled read is no
+evidence. A chip that answers neither the first read nor the lock write gets nothing more (<code>Bus</code>). The residual risk
+is stated: if every lock write was lost or did not take and no read-back succeeded, the shutdown word is programmed.
+No write follows a clean EEPROM_UL reply with EEPROM_Busy set (the power-up load or a word being programmed): the
+driver waits 7 ms and reads again, twice at most, and returns <code>Timeout</code> with nothing sent when the chip is still
+busy. The whole call makes at most 8 transfers and waits at most 14 ms. An initialised driver is always locked (it
+became initialised only after a confirmed lock), so its switch-off needs no extra read, unless its settle finds reset
+evidence (row I3).</p>
+<p>Two residual risks are stated in the <a href="../contract/#residual-risks">contract</a>: row U5 above, and one bit flipped on the
+bus in the first EEPROM_UL reply of an unlocked chip (EUN read as 0 with bits 13:0 clean). The bus has no CRC, so the
+driver takes that reply for a lock and writes one word: start-up programs one limit as a power-on default and then
+fails its read-back, switch-off row U1 programs the shutdown word. It needs an interrupted programming and a bus
+error on exactly that read; the cost is one EEPROM word.</p>
+<p><em>Knob:</em> the model's <code>ForceUnlock()</code> leaves EUN set as an interrupted programming does; <code>eun_write_zero_locks = false</code>
+makes the lock write ineffective. <em>Bench step, not hardware-verified:</em> interrupt a programming and read EEPROM_UL at
+the next start.</p>
+<h3 id="a22-eeprom_ul-during-the-power-up-load">A22: EEPROM_UL during the power-up load<a class="headerlink" href="#a22-eeprom_ul-during-the-power-up-load" title="Permanent link">&para;</a></h3>
+<p>7.5.1.1 names only the limit registers and Configuration as ignored during the load; it says nothing about a write to
+EEPROM_UL then, or about whether EUN reads valid while EEPROM_Busy is set. The switch-off writes nothing after a busy
+EEPROM_UL reply and reads again after the wait, so neither answer changes what it does. A lock write after a failed
+read (no evidence) may still land in a load; it programs nothing either way.</p>
+<p><em>Knob:</em> none. <em>Bench step, not hardware-verified:</em> power-cycle the chip and read EEPROM_UL within 1 ms.</p>
+<h2 id="how-the-safety-tests-use-these">How the safety tests use these<a class="headerlink" href="#how-the-safety-tests-use-these" title="Permanent link">&para;</a></h2>
+<p><code>tests/test_faults.cpp</code> runs a whole session (start, set limits and alert function, read, one-shot, program a user
+word, deinitialise) under each reading above and checks that the driver never wrote while the chip was loading or busy,
+never wrote a traceability or read-only register or an undefined pointer, and never left the EEPROM unlocked. That
+session waits out every load it causes; the switch-off rows W1, I3 and R1 in <code>tests/test_switch_off.cpp</code> switch off
+inside the load, with no time passing, under both readings of A14.
+<code>tests/test_eeprom.cpp</code> covers A2, A5 and A6 in both readings and every failure path of the relock;
+<code>tests/test_safety_regressions.cpp</code> covers A19 and A21 in both readings, and <code>tests/test_switch_off.cpp</code> every row of
+the switch-off decision table.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../contract/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Contract">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Contract
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../api-guide/" class="md-footer__link md-footer__link--next" aria-label="Next: API guide">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                API guide
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      
+<div class="md-copyright kb-footer">
+  <nav class="kb-footer__links" aria-label="Kokeb Labs">
+    <a href="https://kokeb-labs.github.io/">Kokeb Labs docs</a>
+    <a href="https://github.com/kokeb-labs-drivers">GitHub organisation</a>
+    
+      <a href="https://github.com/kokeb-labs-drivers/driver-tmp117">Source</a>
+      <a href="https://github.com/kokeb-labs-drivers/driver-tmp117/issues">Report an issue</a>
+      <a href="https://github.com/kokeb-labs-drivers/driver-tmp117/blob/main/LICENSE">License</a>
+    
+  </nav>
+  
+    <div class="md-copyright__highlight">Copyright (c) 2026 The driver-tmp117 authors</div>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/kokeb-labs-drivers" target="_blank" rel="noopener" title="Kokeb Labs on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.top", "navigation.footer", "navigation.tracking", "navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit", "content.tabs.link", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+  
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    <script>
+    (function () {
+      function fix() {
+        var buttons = document.querySelectorAll(".md-version__current");
+        for (var i = 0; i < buttons.length; i++) {
+          var b = buttons[i], text = (b.textContent || "").replace(/\s+/g, " ").trim();
+          var label = b.getAttribute("aria-label") || "";
+          if (text && label.toLowerCase().indexOf(text.toLowerCase()) === -1) {
+            b.setAttribute("aria-label", text + ", " + label);
+          }
+        }
+      }
+      fix();
+      if (window.MutationObserver) {
+        new MutationObserver(fix).observe(document.body, {childList: true, subtree: true});
+      }
+    })();
+  </script>
+
+  </body>
+</html>

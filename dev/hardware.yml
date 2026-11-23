@@ -1,0 +1,200 @@
+---
+# The chip's hardware in one file: package, pins, the driver hook of each pin, the blocks inside and the reference
+# circuit. `kokeb-docs figures` draws the pinout, the package outline, the block diagram and the circuit from it,
+# `kokeb-docs gen` writes the chip card of the README and the tables of docs/hardware.md,
+# `kokeb-docs hardware --check` validates it and `kokeb-docs hardware --kicad-netlist OUT --circuit ID` exports a
+# circuit for a schematic or PCB tool. Every fact cites SNOSD82D (document `ds` in docs/datasheets.yml) by section
+# and printed page.
+schema: 1
+chip: TMP117
+
+refs:
+  features: {doc: ds, section: "1 Features", page: 1}
+  pinout: {doc: ds, section: "5 Pin Configuration and Functions", page: 4}
+  conditions: {doc: ds, section: "6.3 Recommended Operating Conditions", page: 5}
+  electrical: {doc: ds, section: "6.5 Electrical Characteristics", page: 6}
+  timing: {doc: ds, section: "6.7 Two-Wire Interface Timing", page: 7}
+  blocks: {doc: ds, section: "7.2 Functional Block Diagrams", page: 11}
+  result: {doc: ds, section: "7.3.3 Temperature Result and Limits", page: 13}
+  modes: {doc: ds, section: "7.4 Device Functional Modes", page: 14}
+  therm: {doc: ds, section: "7.4.4 Thermostat Mode", page: 15}
+  eeprom: {doc: ds, section: "7.5.1 EEPROM Overview", page: 18}
+  bus: {doc: ds, section: "7.5.3.1 Serial Interface", page: 20}
+  frames: {doc: ds, section: "7.5.3.1.3 Writing and Reading Operation", page: 21}
+  address: {doc: ds, section: "7.5.3.1.2 Serial Bus Address", page: 21}
+  config: {doc: ds, section: "7.6.3 Configuration Register", page: 27}
+  offset: {doc: ds, section: "7.6.9 Temperature Offset Register", page: 31}
+  did: {doc: ds, section: "7.6.11 Device ID Register", page: 32}
+  app: {doc: ds, section: "8.2 Typical Application", page: 33}
+  outline-wson: {doc: ds, section: "12 Mechanical, Packaging, and Orderable Information (DRV0006B)", page: 40}
+  outline-dsbga: {doc: ds, section: "12 Mechanical, Packaging, and Orderable Information (YBG0006-C01)", page: 43}
+  order: {doc: ds, section: "12 Mechanical, Packaging, and Orderable Information", page: 46}
+  overview: {doc: ds, section: "3 Description", page: 1}
+
+package:
+  type: WSON-6
+  pins: 6
+  exposed_pad: true
+  ref: pinout
+  # The DRV0006B body: 2.0 mm square (1.9 to 2.1), 0.8 mm maximum, 0.65 mm pitch (the drawing, page 40).
+  outline: {length_mm: 2.0, width_mm: 2.0, height_mm: 0.8, pitch_mm: 0.65, ref: outline-wson}
+  variants:
+    - {id: dsbga, type: DSBGA-6, pins: 6, size: "1.53 x 1.00 x 0.531 mm", ordering: "TMP117AIYBGR", ref: order,
+       note: "YBG package, 0.4 mm ball pitch; pins A1 SDA, A2 SCL, B1 V+, B2 GND, C1 ADD0, C2 ALERT"}
+
+# The supply range (the README's chip card shows it): 1.8 V over the full temperature range, 1.7 V to 70 degC.
+supply:
+  - {name: "V+", min_v: 1.8, max_v: 5.5, ref: conditions}
+
+overview:
+  summary: >-
+    a digital temperature sensor with a 16-bit result in steps of 1/128 °C, accurate to 0.1 °C from -20 °C to 50 °C, a
+    programmable alert window and a small EEPROM, read over I2C or SMBus
+  category: High-accuracy digital temperature sensor
+  ref: features
+  inside: sensor
+  applications_ref: features
+  applications:
+    - Electronic thermometers
+    - Wireless environmental sensors
+    - Thermostats
+    - Cold chain asset tracking
+    - Temperature transmitters
+  specs:
+    - {value: "±0.1 °C", label: "maximum error, -20 to 50 °C", ref: features}
+    - {value: "1/128 °C", label: "per count, 16-bit result", ref: result}
+    - {value: "1.8 to 5.5 V", label: "supply, 1.7 V up to 70 °C", ref: conditions}
+    - {value: "3.5 µA", label: "typical at one result per second", ref: electrical}
+    - {value: "400 kHz", label: "fastest SCL", ref: timing}
+    - {value: "0.15 µA", label: "typical in shutdown", ref: electrical}
+  system:
+    host: MCU
+    bus: I2C
+    drives:
+      - {label: ALERT line, detail: "open drain, to an interrupt input", ref: therm}
+    senses:
+      - {label: Die temperature, ref: result}
+
+driver:
+  api: [inc/tmp117.hpp]
+  registers: [inc/tmp117_registers.hpp]
+
+capabilities:
+  - {id: measure, title: Temperature, icon: temperature, status: supported, ref: result, docs: api-guide.md,
+     what: "A 16-bit result, 7.8125 m°C per count, never the 8000h value before a conversion",
+     api: [ReadTemperatureRaw, ReadTemperatureMilliC],
+     registers: [{name: Temp_Result, header: kTempResult}]}
+  - {id: cycle, title: Averaging and cycle time, icon: steps, status: supported, ref: config, docs: configuration.md,
+     what: "1, 8, 32 or 64 conversions per result and eight cycle times, checked against Table 7-7",
+     api: [SetAveraging, SetCycleTime],
+     registers: [{name: Configuration, header: kConfiguration}]}
+  - {id: modes, title: "Continuous, shutdown, one-shot", icon: sleep, status: supported, ref: modes,
+     docs: api-guide.md, what: "Converts continuously, sleeps at 0.15 µA, or takes one result on request",
+     api: [SetMode, StartOneShot, ReadOneShotMilliC, WaitDataReady],
+     registers: [{name: Configuration, header: kConfiguration}]}
+  - {id: alert, title: Alert window and therm, icon: alert, status: supported, ref: therm, docs: api-guide.md,
+     what: "ALERT outside a window (alert mode) or above a limit with hysteresis (therm mode), flags latched",
+     api: [SetAlertFunction, SetAlertPolarity, SetAlertSource, SetLimits, ReadStatus, ReadAlertPin],
+     registers: [{name: THigh_Limit, header: kHighLimit}, {name: TLow_Limit, header: kLowLimit}]}
+  - {id: offset, title: Offset trim, icon: settings, status: supported, ref: offset, docs: configuration.md,
+     what: "The chip adds a signed offset to every result, up to ±256 °C in 7.8125 m°C steps",
+     api: [SetOffsetMilliC], registers: [{name: Temp_Offset, header: kTempOffset}]}
+  - {id: eeprom, title: Power-on defaults, icon: memory, status: guarded, ref: eeprom, docs: api-guide.md,
+     what: "Stores the configuration, limits and offset so the chip starts alone; every step checked and relocked",
+     api: [ProgramPowerOnDefaults, ProgramUserWord],
+     registers: [{name: EEPROM_UL, header: kEepromUnlock}, {name: EEPROM2, header: kEeprom2}]}
+  - {id: identity, title: Identity and traceability, icon: tag, status: supported, ref: did, docs: hardware.md,
+     what: "Checks Device_ID before anything else and reads the two NIST traceability words",
+     api: [EnsureInitialized, ReadUniqueId, GetRevision],
+     registers: [{name: Device_ID, header: kDeviceId}, {name: EEPROM1, header: kEeprom1},
+                 {name: EEPROM3, header: kEeprom3}]}
+  - {id: resets, title: Soft and general-call reset, icon: lock, status: guarded, ref: config,
+     docs: ambiguities.md, what: "Soft reset by default; the bus-wide general-call reset only when you opt in",
+     api: [SoftReset, GeneralCallReset], registers: [{name: Configuration, header: kConfiguration}]}
+  - {id: ara, title: SMBus alert response, icon: bus, status: not-covered, ref: bus, docs: ambiguities.md,
+     what: "The bus-wide alert address read; the driver returns Unsupported and says why"}
+
+# One representative transfer: the 16-bit word of a read or a write, behind its pointer byte (Figure 7-9 to 7-11).
+frames:
+  - id: i2c
+    title: I2C register word
+    description: One register per transfer; the pointer byte comes first and the word follows, high byte first.
+    bits: 24
+    ref: frames
+    rows:
+      - label: Write
+        sub: "host to chip, address + W first"
+        fields:
+          - {name: "0000", bits: [23, 20], tone: slate}
+          - {name: pointer, bits: [19, 16], tone: blue}
+          - {name: data high, bits: [15, 8], tone: green}
+          - {name: data low, bits: [7, 0], tone: green}
+      - label: Read
+        sub: "pointer, then repeated START, address + R"
+        fields:
+          - {name: "0000", bits: [23, 20], tone: slate}
+          - {name: pointer, bits: [19, 16], tone: blue}
+          - {name: reply high, bits: [15, 8], tone: amber}
+          - {name: reply low, bits: [7, 0], tone: amber}
+
+hooks:
+  - {id: i2c, call: "Write() / WriteRead()", kind: i2c, source: inc/tmp117_i2c_interface.hpp, symbol: WriteRead}
+  - {id: alert, call: "ReadAlertPin(bool&)", kind: gpio-in, source: inc/tmp117.hpp, symbol: ReadAlertPin}
+
+pins:
+  - {number: 1, name: SCL, type: bus, domain: "V+", function: "Serial clock, 5 kHz to 400 kHz (A15)", hook: i2c, ref: pinout}
+  - {number: 2, name: GND, type: ground, domain: GND, function: Ground, ref: pinout}
+  - {number: 3, name: ALERT, type: open-drain, domain: "V+",
+     function: "Over-temperature alert or data-ready, open drain, needs a pull-up", hook: alert,
+     unused: "Leave open", ref: pinout}
+  - {number: 4, name: ADD0, type: digital-in, domain: "V+",
+     function: "Address select: GND 0x48, V+ 0x49, SDA 0x4A, SCL 0x4B", ref: address}
+  - {number: 5, name: "V+", type: power, domain: "V+", function: "Supply, 1.8 V to 5.5 V", ref: conditions}
+  - {number: 6, name: SDA, type: bus, domain: "V+", function: "Serial data, open drain, needs a pull-up", hook: i2c,
+     ref: pinout}
+  - {number: EP, name: Thermal pad, type: nc, domain: GND, function: "Thermal pad, left unconnected", ref: app,
+     unverified: "The datasheet shows the pad on the WSON drawing and gives no connection rule on page 4."}
+
+block_diagram:
+  ref: blocks
+  blocks:
+    - {id: sensor, label: Temperature sensor, detail: "internal BJT, ADC", at: [0, 0], tone: teal}
+    - {id: ctrl, label: Control logic, detail: "oscillator, cycle, averaging", at: [1, 0], tone: slate}
+    - {id: regs, label: Register bank, detail: "00h to 08h, 0Fh", at: [2, 0]}
+    - {id: eeprom, label: EEPROM, detail: "defaults, user word", at: [2, 1], tone: amber}
+    - {id: serial, label: Serial interface, detail: "I2C, SMBus", at: [1, 1], tone: blue,
+       pins: [SCL, SDA, ADD0, ALERT]}
+  links:
+    - {from: sensor, to: ctrl, label: result}
+    - {from: ctrl, to: regs, label: counts}
+    - {from: serial, to: regs, label: frames, both: true}
+    - {from: eeprom, to: regs, label: load, both: true}
+
+circuits:
+  - id: typical
+    title: Typical connections
+    description: >-
+      The TMP117 on an MCU's I2C bus at address 0x48, with 5 kΩ pull-ups on SDA and ALERT and the 0.1 µF bypass
+      capacitor, as in the datasheet's typical application. ALERT goes to an interrupt input.
+    ref: app
+    parts:
+      - {id: U1, kind: chip}
+      - id: U2
+        kind: mcu
+        label: MCU
+        pins:
+          - {name: SCL, label: I2C SCL}
+          - {name: SDA, label: I2C SDA}
+          - {name: IRQ, label: GPIO (IRQ)}
+          - VDD
+          - GND
+      - {id: C1, kind: capacitor, value: 0.1 µF, ref: app}
+      - {id: R1, kind: resistor, value: 5 kΩ, ref: app}
+      - {id: R2, kind: resistor, value: 5 kΩ, ref: app}
+    nets:
+      - {name: "+3V3", kind: supply, nodes: [U1.V+, C1.1, R1.1, R2.1, U2.VDD]}
+      - {name: GND, kind: ground, nodes: [U1.GND, U1.ADD0, C1.2, U2.GND]}
+      - {name: SCL, nodes: [U1.SCL, U2.SCL]}
+      - {name: SDA, nodes: [U1.SDA, R1.2, U2.SDA]}
+      - {name: ALERT, nodes: [U1.ALERT, R2.2, U2.IRQ]}
+    unused: [U1.EP]

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="477" height="343" viewBox="0 0 477 343" role="img" aria-labelledby="bus-frame-title bus-frame-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="bus-frame-title">One register read on the I2C bus</title>
+<desc id="bus-frame-desc">Sequence of one I2C register read: the host sends START, the write address and the pointer 00h of Temp_Result, repeats START with the read address, the TMP117 returns two bytes and the host ends with NACK and STOP.</desc>
+<defs><marker id="bus-frame-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7C8798"/></marker></defs>
+<rect x="0.5" y="0.5" width="476" height="342" rx="16" fill="#FFFFFF" stroke="#E2E7EE"/>
+<text x="32" y="54.8" font-size="26" font-weight="700" fill="#0E1726">One register read on the I2C bus</text>
+<rect x="32" y="70.8" width="413" height="1" fill="#E2E7EE"/>
+<path d="M104.8 144.8 L104.8 346.8" fill="none" stroke="#738093" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M372.2 144.8 L372.2 346.8" fill="none" stroke="#738093" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M108.8 180.8 L368.2 180.8" fill="none" stroke="#7C8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#bus-frame-arrow-rail)"/>
+<path d="M108.8 224.8 L368.2 224.8" fill="none" stroke="#7C8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#bus-frame-arrow-rail)"/>
+<path d="M368.2 268.8 L108.8 268.8" fill="none" stroke="#7C8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#bus-frame-arrow-rail)"/>
+<path d="M108.8 312.8 L368.2 312.8" fill="none" stroke="#7C8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#bus-frame-arrow-rail)"/>
+<rect x="39.8" y="88.8" width="130" height="52" rx="10" fill="#FDF0FF" stroke="#A21CAF" stroke-width="1.4"/>
+<rect x="39.8" y="96.8" width="4" height="36" rx="2" fill="#A21CAF"/>
+<rect x="307.2" y="88.8" width="130" height="52" rx="10" fill="#EAF7EF" stroke="#15803D" stroke-width="1.4"/>
+<rect x="307.2" y="96.8" width="4" height="36" rx="2" fill="#15803D"/>
+<text x="107.8" y="119.3" font-size="15" font-weight="700" text-anchor="middle" fill="#86198F">Host</text>
+<text x="375.2" y="119.3" font-size="15" font-weight="700" text-anchor="middle" fill="#14532D">TMP117</text>
+<rect x="112.8" y="156.8" width="251.3" height="20" rx="10" fill="#FFFFFF"/>
+<text x="238.5" y="171.1" font-size="12" font-weight="500" text-anchor="middle" fill="#566070">START, 0x48 + W, 0x00 (Temp_Result)</text>
+<rect x="151.2" y="200.8" width="174.5" height="20" rx="10" fill="#FFFFFF"/>
+<text x="238.5" y="215.1" font-size="12" font-weight="500" text-anchor="middle" fill="#566070">repeated START, 0x48 + R</text>
+<rect x="174.6" y="244.8" width="127.8" height="20" rx="10" fill="#FFFFFF"/>
+<text x="238.5" y="259.1" font-size="12" font-weight="500" text-anchor="middle" fill="#566070">high byte, low byte</text>
+<rect x="193.3" y="288.8" width="90.4" height="20" rx="10" fill="#FFFFFF"/>
+<text x="238.5" y="303.1" font-size="12" font-weight="500" text-anchor="middle" fill="#566070">NACK, STOP</text>
+</svg>

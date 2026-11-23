@@ -1,0 +1,171 @@
+---
+# The vendor documents this driver was written against (handbook ADR-0019), and where the driver relies on them.
+# Never commit a PDF: `sha256` identifies the exact file that was used, so a reader can confirm they hold the same
+# revision. `pdf` is a stable direct link when the vendor publishes one (page links are built from it, adding
+# `page_offset` when the printed page numbers differ from the PDF's); otherwise readers download from `url`.
+#
+# The README card, docs/datasheet.md and the "Datasheet" box on each page are generated from this file by
+# tools/docs/generators/datasheet.py (`kokeb-docs gen`).
+documents:
+  - id: ds
+    vendor: Texas Instruments
+    title: "TMP117 High-Accuracy, Low-Power, Digital Temperature Sensor With SMBus- and I2C-Compatible Interface"
+    kind: Datasheet
+    number: SNOSD82D
+    revision: D
+    date: September 2022
+    url: https://www.ti.com/product/TMP117
+    pdf: https://www.ti.com/lit/gpn/TMP117
+    page_offset: 0
+    sha256: "78212e91e478035a91165397a8de8a90bfc776759dc445243c033537f0c4b789"
+  - id: an-precise
+    vendor: Texas Instruments
+    title: "Precise Temperature Measurements With TMP116 and TMP117"
+    kind: Application note
+    number: SNOA986
+    revision: A
+    date: 2019-08
+    url: https://www.ti.com/product/TMP117
+    pdf: https://www.ti.com/lit/pdf/SNOA986
+    page_offset: 0
+    sha256: "dac8d45d612654b130deec775f64401a746b0a63a9b6402ec1ec400b93f17bec"
+  - id: an-qformat
+    vendor: Texas Instruments
+    title: "Fixed-point interpretation of the temperature output"
+    kind: Application note
+    number: SBAA588
+    revision: A
+    date: 2025-01
+    url: https://www.ti.com/product/TMP117
+    pdf: https://www.ti.com/lit/pdf/SBAA588
+    page_offset: 0
+    sha256: "030ca48a844df836f6268e2960b2ea1fdf073eba07ee693b404303efa7848e50"
+  - id: an-alert
+    vendor: Texas Instruments
+    title: "Alert and therm threshold design across temperature sensors"
+    kind: Application note
+    number: SDAA311
+    revision: none stated
+    date: 2026-03
+    url: https://www.ti.com/product/TMP117
+    pdf: https://www.ti.com/lit/pdf/SDAA311
+    page_offset: 0
+    sha256: "e0f62e796fa5db026c2dc7ccada7d5df1f260e6093d0f32061ea15ed686e5264"
+
+# One row per thing the driver takes from a document: the datasheet's own section names and printed page
+# numbers, the driver API that implements it, and the docs pages that explain it (file names in docs/).
+topics:
+  - topic: Pins and packages
+    doc: ds
+    section: 5 Pin Configuration and Functions
+    page: 4
+    driver: "`ReadAlertPin()`, `kAddressGnd` to `kAddressScl`"
+    docs: [hardware, quickstart]
+  - topic: Supply range, supply current and shutdown current
+    doc: ds
+    section: 6.3 Recommended Operating Conditions; 6.5 Electrical Characteristics
+    page: 5
+    driver: "`Mode::Shutdown`, `Deinitialize()`"
+    docs: [hardware]
+  - topic: Power-up, the EEPROM load and the first result
+    doc: ds
+    section: 7.3.1 Power-Up
+    page: 12
+    driver: "`EnsureInitialized()`, `Config::reset_timeout_ms`, `Error::NoMeasurement`"
+    docs: [hardware, api-guide, ambiguities]
+  - topic: Averaging and the conversion cycle time
+    doc: ds
+    section: 7.3.2 Averaging; Table 7-7
+    page: 28
+    driver: "`Averaging`, `CycleTime`, `GetCycleTimeUs()`"
+    docs: [configuration, api-guide]
+  - topic: Result format, LSB and the 8000h value
+    doc: ds
+    section: 7.3.3 Temperature Result and Limits; Table 7-1
+    page: 13
+    driver: "`ReadTemperatureRaw()`, `ReadTemperatureMilliC()`, `CountsToMilliC()`, `MilliCToCounts()`"
+    docs: [api-guide, architecture]
+  - topic: Continuous, shutdown and one-shot modes
+    doc: ds
+    section: 7.4.1 Continuous Conversion; 7.4.2 Shutdown; 7.4.3 One-Shot
+    page: 14
+    driver: "`Mode`, `SetMode()`, `StartOneShot()`, `ReadOneShotMilliC()`, `WaitDataReady()`"
+    docs: [api-guide, configuration]
+  - topic: Alert mode and therm mode
+    doc: ds
+    section: 7.4.4 Therm and Alert Modes
+    page: 15
+    driver: "`AlertFunction`, `SetAlertFunction()`, `SetLimits()`, `ReadStatus()`"
+    docs: [api-guide, configuration, hardware]
+  - topic: EEPROM, unlock and programming
+    doc: ds
+    section: 7.5.1 EEPROM Overview
+    page: 18
+    driver: "`ProgramPowerOnDefaults()`, `ProgramUserWord()`, `Error::EepromVerifyFailed`"
+    docs: [api-guide, ambiguities]
+  - topic: Traceability words that must not be erased
+    doc: ds
+    section: 7.5.1.1 EEPROM Overview; 7.5.1.2 Programming the EEPROM; 7.6.7 EEPROM1; 7.6.10 EEPROM3
+    page: 18
+    driver: "`ReadUniqueId()`, `reg::IsWritablePointer()`"
+    docs: [api-guide, contract]
+  - topic: I2C addresses and the pointer register
+    doc: ds
+    section: 7.5.2 Pointer Register; 7.5.3.1.2 Serial Bus Address
+    page: 20
+    driver: "`kI2cAddress`, `I2cInterface`, `RegisterBus`"
+    docs: [hardware, porting]
+  - topic: SMBus alert response and general call
+    doc: ds
+    section: 7.5.3.1.5 SMBus Alert Function; 7.5.3.1.6 General-Call Reset Function
+    page: 22
+    driver: "`SmbusAlertResponse()`, `GeneralCallReset()`, `Config::allow_general_call`"
+    docs: [api-guide, ambiguities, porting]
+  - topic: Bus timeout and the SCL range
+    doc: ds
+    section: 7.5.3.1.7 Timeout Function; 6.7 Two-Wire Interface Timing
+    page: 22
+    driver: "`kMaxClockHz`, `kMinClockHz`"
+    docs: [hardware, porting]
+  - topic: Register map and reset values
+    doc: ds
+    section: 7.6 Register Map; Table 7-3
+    page: 25
+    driver: "`inc/tmp117_registers.hpp`, `Config{}`"
+    docs: [configuration, architecture]
+  - topic: Configuration register
+    doc: ds
+    section: 7.6.3 Configuration Register; Table 7-6
+    page: 27
+    driver: "`ConfigWord()`, `DecodeStatus()`, `Status`, `GetLatchedStatus()`"
+    docs: [api-guide, architecture]
+  - topic: Limit registers and the offset register
+    doc: ds
+    section: 7.6.4 THigh_Limit; 7.6.5 TLow_Limit (p. 29); 7.6.9 Temperature Offset (p. 31)
+    page: 29
+    driver: "`SetLimits()`, `SetOffsetMilliC()`"
+    docs: [configuration, ambiguities]
+  - topic: Device ID and the revision field
+    doc: ds
+    section: 7.6.11 Device ID Register
+    page: 32
+    driver: "`EnsureInitialized()`, `GetRevision()`, `Error::DeviceIdMismatch`"
+    docs: [hardware, troubleshooting, ambiguities]
+  - topic: Typical connections and pull-ups
+    doc: ds
+    section: 8.2 Typical Application
+    page: 33
+    driver: "-"
+    docs: [hardware]
+  - topic: Self-heating and averaging noise
+    doc: ds
+    section: 8.2.2 Detailed Design Procedure
+    page: 34
+    driver: "-"
+    docs: [hardware, troubleshooting]
+  - topic: Packages and ordering
+    doc: ds
+    section: 12 Mechanical, Packaging, and Orderable Information
+    page: 39
+    driver: "-"
+    docs: [hardware]
